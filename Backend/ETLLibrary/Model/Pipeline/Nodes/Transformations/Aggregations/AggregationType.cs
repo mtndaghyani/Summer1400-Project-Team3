@@ -1,4 +1,4 @@
-﻿namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Transformations.Aggregations
+﻿namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Aggregations
 {
     public enum AggregationType
     {
@@ -8,4 +8,5 @@
         Min,
         Max
     }
+    
 }

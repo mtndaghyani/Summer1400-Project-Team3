@@ -3,9 +3,5 @@
     public class SqlDestination : DestinationNode
     {
         private string _connectionString;
-        public override void Execute()
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

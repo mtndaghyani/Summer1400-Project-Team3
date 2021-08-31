@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using ETLLibrary.Interfaces;
 
@@ -51,6 +52,29 @@ namespace ETLLibrary.Database
             {
                 Directory.CreateDirectory(path+"/"+username);
             }
+        }
+
+        public List<string> GetCsvFiles(string username)
+        {
+            return _mapper.Get(username);
+        }
+
+        public string GetCsvContent(string username, string fileName)
+        {
+            if (FileExists(username, fileName))
+            {
+                string content = File.ReadAllText(Path + "/" + username + "/" + fileName);
+                return content;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private bool FileExists(string username, string fileName)
+        {
+            return Directory.Exists(Path) && Directory.Exists(Path+"/"+username) && File.Exists(Path+"/" + username + "/" + fileName);
         }
     }
 }

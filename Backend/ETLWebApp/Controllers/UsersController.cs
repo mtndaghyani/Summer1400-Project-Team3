@@ -1,6 +1,8 @@
-﻿using ETLLibrary.Authentication.AuthenticationModels;
+﻿using System.Collections.Generic;
+using ETLLibrary.Authentication;
 using ETLLibrary.Database;
 using ETLLibrary.Interfaces;
+using ETLWebApp.Models.AuthenticationModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ETLWebApp.Controllers
@@ -12,11 +14,13 @@ namespace ETLWebApp.Controllers
     {
         private EtlContext _context;
         private IAuthenticator _authenticator;
+        private ICsvDatasetManager _manager;
 
-        public UsersController(EtlContext context, IAuthenticator authenticator)
+        public UsersController(EtlContext context, IAuthenticator authenticator, ICsvDatasetManager manager)
         {
             _context = context;
             _authenticator = authenticator;
+            _manager = manager;
         }
 
         [HttpPost("/signup")]
@@ -52,6 +56,13 @@ namespace ETLWebApp.Controllers
         {
             _authenticator.Logout(model.Token);
             return Ok(new {Message = "User logout successfully!"});
+        }
+
+        [HttpGet("/{token}/csv")]
+        public ActionResult GetCsvFiles(string token)
+        {
+            User user = Authenticator.Tokens[token];
+            return Ok(new {CsvFiles = _manager.GetCsvFiles(user.Username)});
         }
     }
 }

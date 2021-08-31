@@ -18,6 +18,26 @@ namespace ETLLibrary.Migrations
                 .HasAnnotation("ProductVersion", "5.0.9")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("ETLLibrary.Database.Csv", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CsvFiles");
+                });
+
             modelBuilder.Entity("ETLLibrary.Database.User", b =>
                 {
                     b.Property<int>("Id")
@@ -43,6 +63,22 @@ namespace ETLLibrary.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("ETLLibrary.Database.Csv", b =>
+                {
+                    b.HasOne("ETLLibrary.Database.User", "User")
+                        .WithMany("csvFiles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ETLLibrary.Database.User", b =>
+                {
+                    b.Navigation("csvFiles");
                 });
 #pragma warning restore 612, 618
         }

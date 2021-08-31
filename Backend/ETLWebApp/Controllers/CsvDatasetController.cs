@@ -1,5 +1,6 @@
 ﻿using ETLLibrary.Authentication;
 using ETLLibrary.Database;
+using ETLLibrary.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,12 +11,12 @@ namespace ETLWebApp.Controllers
     public class CsvDatasetController : Controller
     {
         private EtlContext _context;
-        private CsvDatasetManager _manager;
+        private ICsvDatasetManager _manager;
 
-        public CsvDatasetController(EtlContext context)
+        public CsvDatasetController(EtlContext context, ICsvDatasetManager manager)
         {
             _context = context;
-            _manager = new CsvDatasetManager(_context);
+            _manager = manager;
         }
         
         [HttpPost("/create")]

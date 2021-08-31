@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
+using ETLLibrary.Interfaces;
 
 namespace ETLLibrary.Database
 {
-    public class CsvDatasetManager
+    public class CsvDatasetManager : ICsvDatasetManager
     {
         private ConnectorMapper _mapper;
         private const string Path = "csvFiles";

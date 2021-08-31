@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ETLLibrary.Database
 {
-    public class ConnectorMap
+    public class ConnectorMapper
     {
         public readonly EtlContext Context;
 
-        public ConnectorMap(EtlContext context)
+        public ConnectorMapper(EtlContext context)
         {
             Context = context;
         }

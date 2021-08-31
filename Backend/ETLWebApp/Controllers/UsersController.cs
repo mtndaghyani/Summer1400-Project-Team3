@@ -1,6 +1,6 @@
-﻿using ETLLibrary.Authentication;
-using ETLLibrary.Authentication.AuthenticationModels;
+﻿using ETLLibrary.Authentication.AuthenticationModels;
 using ETLLibrary.Database;
+using ETLLibrary.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ETLWebApp.Controllers
@@ -11,12 +11,12 @@ namespace ETLWebApp.Controllers
     public class UsersController: ControllerBase
     {
         private EtlContext _context;
-        private Authenticator _authenticator;
+        private IAuthenticator _authenticator;
 
-        public UsersController(EtlContext context)
+        public UsersController(EtlContext context, IAuthenticator authenticator)
         {
             _context = context;
-            _authenticator = new Authenticator(context);
+            _authenticator = authenticator;
         }
 
         [HttpPost("/signup")]

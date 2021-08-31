@@ -5,7 +5,6 @@ namespace ETLLibrary.Model.Pipeline.Nodes
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public Node Parent { get; set; }
         public abstract void Execute();
         
     }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using ETLLibrary.Model.Pipeline.Nodes;
+using ETLLibrary.Model.Pipeline.Nodes.Transformations;
 
 namespace ETLLibrary.Model.Pipeline
 {

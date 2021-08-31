@@ -1,4 +1,4 @@
-﻿namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Transformations.Filters
+﻿namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Filters
 {
     public class Condition
     {

@@ -1,4 +1,4 @@
-﻿namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Transformations.Joins
+﻿namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Joins
 {
     public enum JoinType
     {

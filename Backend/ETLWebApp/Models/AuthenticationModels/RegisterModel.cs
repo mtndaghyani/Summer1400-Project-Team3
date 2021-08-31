@@ -1,4 +1,4 @@
-﻿namespace ETLLibrary.Authentication.AuthenticationModels
+﻿namespace ETLWebApp.Models.AuthenticationModels
 {
     public class RegisterModel
     {

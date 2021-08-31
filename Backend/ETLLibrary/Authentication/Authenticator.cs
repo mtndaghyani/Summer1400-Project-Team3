@@ -8,12 +8,12 @@ namespace ETLLibrary.Authentication
     public class Authenticator: IAuthenticator
     {
         private EtlContext _context;
-        private Dictionary<string, User> _tokens;
+        public static Dictionary<string, User> Tokens;
 
         public Authenticator(EtlContext context)
         {
             _context = context;
-            _tokens = new Dictionary<string, User>();
+            Tokens = new Dictionary<string, User>();
         }
 
         public User ValidateUser(string username, string password)
@@ -24,13 +24,13 @@ namespace ETLLibrary.Authentication
         public string Login(User user)
         {
             var token = TokenGenerator.Generate(16);
-            _tokens.Add(token, user);
+            Tokens.Add(token, user);
             return token;
         }
 
         public void Logout(string token)
         {
-            _tokens.Remove(token);
+            Tokens.Remove(token);
         }
     }
 }

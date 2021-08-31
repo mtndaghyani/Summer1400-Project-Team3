@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
 
 namespace ETLLibrary.Database
@@ -13,5 +14,7 @@ namespace ETLLibrary.Database
         public string Password { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        
+        public List<Csv> csvFiles { get; set; } = new();
     }
 }

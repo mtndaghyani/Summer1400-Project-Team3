@@ -22,11 +22,11 @@ namespace ETLWebApp.Controllers
         }
         
         [HttpPost("create/")]
-        public ActionResult Create([FromBody] IFormFile myFile,[FromQuery] string token)
+        public ActionResult Create(IFormFile myFile, string token)
         {
             User user = Authenticator.Tokens[token];
             _manager.SaveCsv(myFile.OpenReadStream(), user.Username, myFile.FileName, myFile.Length);
-            return Ok();
+            return Ok(new {Message = "File uploaded successfully."});
         }
 
         [Route("content/")]

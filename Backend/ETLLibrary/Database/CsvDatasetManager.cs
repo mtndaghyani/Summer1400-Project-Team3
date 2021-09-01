@@ -23,7 +23,6 @@ namespace ETLLibrary.Database
             if (!File.Exists(Path + "/" + username + "/" + fileName))
             {
                 _mapper.Add(username, fileName);
-                _mapper.Save();
 
                 string content = "";
                 int c = 0;

@@ -9,8 +9,8 @@ namespace ETLWebApp.Controllers
 {
     
     [ApiController]
-    [Route("[controller]")]
-    public class UsersController: ControllerBase
+    [Route("[controller]/")]
+    public class UsersController: Controller
     {
         private EtlContext _context;
         private IAuthenticator _authenticator;
@@ -23,7 +23,7 @@ namespace ETLWebApp.Controllers
             _manager = manager;
         }
 
-        [HttpPost("/signup")]
+        [HttpPost("signup")]
         public ActionResult SignUp(RegisterModel model)
         {
             var user = new User()
@@ -39,7 +39,7 @@ namespace ETLWebApp.Controllers
             return Ok(new {Message = "User registered successfully!"});
         }
 
-        [HttpPost("/login")]
+        [HttpPost("login")]
         public ActionResult Login(LoginModel model)
         {
             var user = _authenticator.ValidateUser(model.Username, model.Password);
@@ -51,14 +51,14 @@ namespace ETLWebApp.Controllers
             return Unauthorized("Authentication failed");
         }
 
-        [HttpPost("/logout")]
+        [HttpPost("logout")]
         public ActionResult Logout(LogoutModel  model)
         {
             _authenticator.Logout(model.Token);
             return Ok(new {Message = "User logout successfully!"});
         }
 
-        [HttpGet("/{token}/csv")]
+        [HttpGet("{token}/csv")]
         public ActionResult GetCsvFiles(string token)
         {
             User user = Authenticator.Tokens[token];

@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using ETLLibrary.Authentication;
 using ETLLibrary.Database;
 using ETLLibrary.Interfaces;
+using ETLWebApp.Models.CsvModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ETLWebApp.Controllers
 {
     [ApiController]
-    [Route("dataset/csv")]
-    public class CsvDatasetController : Controller
+    public class CsvDatasetController : ControllerBase
     {
         private EtlContext _context;
         private ICsvDatasetManager _manager;
@@ -20,19 +20,21 @@ namespace ETLWebApp.Controllers
             _manager = manager;
         }
         
-        [HttpPost("/create")]
-        public ActionResult Create([FromBody] IFormFile myFile, string token)
+        [Route("dataset/csv/create")]
+        [HttpPost]
+        public ActionResult Create([FromBody] IFormFile myFile,[FromQuery] string token)
         {
             User user = Authenticator.Tokens[token];
             _manager.SaveCsv(myFile.OpenReadStream(), user.Username, myFile.FileName, myFile.Length);
             return Ok();
         }
 
-        [HttpGet("/content")]
-        public ActionResult GetContent(string token, string fileName)
+        [Route("dataset/csv/content")]
+        [HttpGet]
+        public ActionResult GetContent(ContentModel model)
         {
-            User user = Authenticator.Tokens[token];
-            var response = _manager.GetCsvContent(user.Username, fileName);
+            User user = Authenticator.Tokens[model.Token];
+            var response = _manager.GetCsvContent(user.Username, model.FileName);
             if (response == null)
             {
                 return NotFound(new {Message = "Not Found"});

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ETLLibrary.Authentication;
 using ETLLibrary.Database;
 using ETLLibrary.Interfaces;
@@ -58,11 +59,15 @@ namespace ETLWebApp.Controllers
             return Ok(new {Message = "User logout successfully!"});
         }
 
-        [HttpGet("{token}/csv")]
-        public ActionResult GetCsvFiles(string token)
+        [HttpGet("{username}/csvs")]
+        public ActionResult GetCsvFiles(string username)
         {
-            User user = Authenticator.Tokens[token];
-            return Ok(new {CsvFiles = _manager.GetCsvFiles(user.Username)});
+            var user = _context.Users.SingleOrDefault(u => u.Username == username);
+            if (user == null)
+            {
+                return NotFound(new {Message = "User with this username not found"});
+            }
+            return Ok(new {CsvFiles = _manager.GetCsvFiles(username)});
         }
     }
 }

@@ -5,10 +5,15 @@ using ETLLibrary.Interfaces;
 
 namespace ETLLibrary.Authentication
 {
-    public class Authenticator: IAuthenticator
+    public class Authenticator : IAuthenticator
     {
         private EtlContext _context;
         public static Dictionary<string, User> Tokens;
+
+        public static User GetUserFromToken(string token)
+        {
+            return !Tokens.ContainsKey(token) ? null : Tokens[token];
+        }
 
         public Authenticator(EtlContext context)
         {

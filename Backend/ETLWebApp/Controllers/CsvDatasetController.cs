@@ -1,7 +1,6 @@
 ﻿using ETLLibrary.Authentication;
 using ETLLibrary.Database;
 using ETLLibrary.Interfaces;
-using ETLWebApp.Models.CsvModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,37 +11,41 @@ namespace ETLWebApp.Controllers
 
     public class CsvDatasetController : ControllerBase
     {
-        private EtlContext _context;
         private ICsvDatasetManager _manager;
 
-        public CsvDatasetController(EtlContext context, ICsvDatasetManager manager)
+        public CsvDatasetController(ICsvDatasetManager manager)
         {
-            _context = context;
             _manager = manager;
         }
         
         [HttpPost("create/")]
         public ActionResult Create(IFormFile myFile, string token)
         {
-            User user = Authenticator.Tokens[token];
+            var user = Authenticator.GetUserFromToken(token);
+            if (user == null)
+            {
+                return Unauthorized(new {Message = "First login."});
+            }
             _manager.SaveCsv(myFile.OpenReadStream(), user.Username, myFile.FileName, myFile.Length);
             return Ok(new {Message = "File uploaded successfully."});
         }
 
-        [Route("content/")]
+        [Route("{filename}")]
         [HttpGet]
-        public ActionResult GetContent(ContentModel model)
+        public ActionResult GetContent(string filename, string token)
         {
-            User user = Authenticator.Tokens[model.Token];
-            var response = _manager.GetCsvContent(user.Username, model.FileName);
+            
+            var user = Authenticator.GetUserFromToken(token);
+            if (user == null)
+            {
+                return Unauthorized(new {Message = "First login."});
+            }
+            var response = _manager.GetCsvContent(user.Username, filename);
             if (response == null)
             {
                 return NotFound(new {Message = "Not Found"});
             }
-            else
-            {
-                return Ok(new {Content = response});
-            }
+            return Ok(new {Content = response});
         }
     }
 }

@@ -8,6 +8,6 @@ namespace ETLLibrary.Database
         [Key] public int Id{ get; set; }
         public int UserId { get; set; }
         public string Name { get; set; }
-        public User User { get; set; } = new();
+        public User User { get; set; }
     }
 }

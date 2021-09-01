@@ -14,44 +14,19 @@ namespace ETLLibrary.Database
         }
 
 
-        public List<string> Get(string key)
+        public List<string> Get(string username)
         {
-            var user = Context.Users.Where(w => w.Username == key).Include(w => w.csvFiles).FirstOrDefault();
-            if (user == null)
-            {
-                return new List<string>();
-            }
-
+            var user = Context.Users.Where(w => w.Username == username).Include(w => w.csvFiles).Single();
             return user.csvFiles.Select(document => document.Name).ToList();
         }
 
-        public void Add(string key, string value)
+        public void Add(string username, string fileName)
         {
-            var user = Context.Users.Find(key);
-            if (user == null)
-            {
-                user = new User { Username = key };
-                Context.Users.Add(user);
-            }
-
-            var csvFile = Context.CsvFiles.Find(value);
-            if (csvFile == null)
-            {
-                csvFile = new Csv() { Name = value };
-                Context.CsvFiles.Add(csvFile);
-            }
-
-            if (user.csvFiles.Contains(csvFile))
-            {
-                return;
-            }
-
+            var user = Context.Users.Include(x => x.csvFiles).Single(u => u.Username == username);
+            var csvFile = new Csv() { Name = fileName, User = user };
             user.csvFiles.Add(csvFile);
-        }
-
-        public void Save()
-        {
             Context.SaveChanges();
         }
+        
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using ETLLibrary.Interfaces;
 
 namespace ETLLibrary.Database
@@ -24,14 +25,9 @@ namespace ETLLibrary.Database
             {
                 _mapper.Add(username, fileName);
 
-                string content = "";
-                int c = 0;
-                byte[] bytes = new byte[fileLength];
+                var bytes = new byte[fileLength];
                 stream.Read(bytes);
-                foreach (var b in bytes)
-                {
-                    content += Convert.ToChar(b);
-                }
+                var content = bytes.Aggregate("", (current, b) => current + Convert.ToChar(b));
 
                 File.WriteAllText(Path + "/" + username + "/" + fileName, content);
             }

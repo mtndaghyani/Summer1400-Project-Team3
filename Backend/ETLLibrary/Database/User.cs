@@ -15,6 +15,6 @@ namespace ETLLibrary.Database
         public string FirstName { get; set; }
         public string LastName { get; set; }
         
-        public List<Csv> csvFiles { get; set; } = new();
+        public List<Csv> csvFiles { get; set; }
     }
 }

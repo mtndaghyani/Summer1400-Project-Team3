@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ETLLibrary.Migrations
 {
     [DbContext(typeof(EtlContext))]
-    [Migration("20210830090530_CreateDB")]
+    [Migration("20210901103747_CreateDB")]
     partial class CreateDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -19,6 +19,26 @@ namespace ETLLibrary.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.9")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("ETLLibrary.Database.Csv", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CsvFiles");
+                });
 
             modelBuilder.Entity("ETLLibrary.Database.User", b =>
                 {
@@ -45,6 +65,22 @@ namespace ETLLibrary.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("ETLLibrary.Database.Csv", b =>
+                {
+                    b.HasOne("ETLLibrary.Database.User", "User")
+                        .WithMany("csvFiles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ETLLibrary.Database.User", b =>
+                {
+                    b.Navigation("csvFiles");
                 });
 #pragma warning restore 612, 618
         }

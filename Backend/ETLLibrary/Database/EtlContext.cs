@@ -1,4 +1,5 @@
-﻿using ETLLibrary.Interfaces;
+﻿using System.Runtime.Serialization;
+using ETLLibrary.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ETLLibrary.Database

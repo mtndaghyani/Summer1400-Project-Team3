@@ -23,7 +23,7 @@ namespace ETLLibrary.Database
 
             if (!File.Exists(Path + "/" + username + "/" + fileName))
             {
-                _mapper.Add(username, fileName);
+                _mapper.AddNewFile(username, fileName);
 
                 var bytes = new byte[fileLength];
                 stream.Read(bytes);
@@ -51,7 +51,7 @@ namespace ETLLibrary.Database
 
         public List<string> GetCsvFiles(string username)
         {
-            return _mapper.Get(username);
+            return _mapper.GetUserFiles(username);
         }
 
         public string GetCsvContent(string username, string fileName)

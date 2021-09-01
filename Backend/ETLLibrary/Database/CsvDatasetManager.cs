@@ -9,6 +9,7 @@ namespace ETLLibrary.Database
     public class CsvDatasetManager : ICsvDatasetManager
     {
         private ConnectorMapper _mapper;
+        private ICsvDatasetManager _csvDatasetManagerImplementation;
         private const string Path = "csvFiles";
 
         public CsvDatasetManager(EtlContext context)
@@ -70,6 +71,12 @@ namespace ETLLibrary.Database
         private bool FileExists(string username, string fileName)
         {
             return Directory.Exists(Path) && Directory.Exists(Path+"/"+username) && File.Exists(Path+"/" + username + "/" + fileName);
+        }
+
+        public void DeleteCsv(User user, string fileName)
+        {
+            File.Delete(Path + "/" + user.Username + "/" + fileName);
+            _mapper.DeleteFile(fileName, user.Id);
         }
     }
 }

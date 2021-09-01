@@ -1,8 +1,10 @@
-﻿using ETLLibrary.Authentication;
+﻿using System;
+using ETLLibrary.Authentication;
 using ETLLibrary.Database;
 using ETLLibrary.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters.Xml;
 
 namespace ETLWebApp.Controllers
 {
@@ -47,5 +49,18 @@ namespace ETLWebApp.Controllers
             }
             return Ok(new {Content = response});
         }
+
+        [HttpDelete("delete/{fileName}")]
+        public ActionResult Delete(string fileName, string token)
+        {
+            var user = Authenticator.GetUserFromToken(token);
+            if (user == null)
+            {
+                return Unauthorized(new {Message = "First login."});
+            }   
+            _manager.DeleteCsv(user, fileName);
+            return Ok(new {Message = "File deleted successfully."});
+        }
+        
     }
 }

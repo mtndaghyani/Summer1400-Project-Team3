@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using ETLLibrary.Database;
 
 namespace ETLLibrary.Interfaces
 {
@@ -9,5 +10,7 @@ namespace ETLLibrary.Interfaces
         List<string> GetCsvFiles(string username);
 
         string GetCsvContent(string username, string fileName);
+
+        void DeleteCsv(User user, string fileName);
     }
 }

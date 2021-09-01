@@ -28,6 +28,13 @@ namespace ETLLibrary.Database
             Context.SaveChanges();
         }
 
+        public void DeleteFile(string fileName, int userId)
+        {
+            var csv = Context.CsvFiles.SingleOrDefault(x => x.Name == fileName && x.UserId == userId);
+            if (csv == null) return;
+            Context.CsvFiles.Remove(csv);
+            Context.SaveChanges();
+        }
         
     }
 }

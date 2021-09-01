@@ -1,5 +1,4 @@
-﻿using System;
-using ETLLibrary.Authentication;
+﻿using ETLLibrary.Authentication;
 using ETLLibrary.Database;
 using ETLLibrary.Interfaces;
 using ETLWebApp.Models.CsvModels;
@@ -9,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace ETLWebApp.Controllers
 {
     [ApiController]
+    [Route("dataset/csv/")]
+
     public class CsvDatasetController : ControllerBase
     {
         private EtlContext _context;
@@ -20,8 +21,7 @@ namespace ETLWebApp.Controllers
             _manager = manager;
         }
         
-        [Route("dataset/csv/create")]
-        [HttpPost]
+        [HttpPost("create/")]
         public ActionResult Create([FromBody] IFormFile myFile,[FromQuery] string token)
         {
             User user = Authenticator.Tokens[token];
@@ -29,7 +29,7 @@ namespace ETLWebApp.Controllers
             return Ok();
         }
 
-        [Route("dataset/csv/content")]
+        [Route("content/")]
         [HttpGet]
         public ActionResult GetContent(ContentModel model)
         {

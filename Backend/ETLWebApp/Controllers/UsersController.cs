@@ -9,7 +9,7 @@ namespace ETLWebApp.Controllers
 {
     
     [ApiController]
-    [Route("[controller]/")]
+    [Route("users/")]
     public class UsersController: Controller
     {
         private EtlContext _context;

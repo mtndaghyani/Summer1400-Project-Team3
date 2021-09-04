@@ -6,9 +6,10 @@ namespace ETLLibrary.Database
     {
         [Key]
         public int Id { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public string DbUsername { get; set; }
+        public string DbPassword { get; set; }
         public string Url { get; set; }
+        public string Name { get; set; }
         
         public User User { get; set; }
         public int UserId { get; set; }

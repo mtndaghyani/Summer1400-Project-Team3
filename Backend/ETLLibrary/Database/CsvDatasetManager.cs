@@ -8,13 +8,12 @@ namespace ETLLibrary.Database
 {
     public class CsvDatasetManager : ICsvDatasetManager
     {
-        private ConnectorMapper _mapper;
-        private ICsvDatasetManager _csvDatasetManagerImplementation;
+        private CsvGateway _gateway;
         private const string Path = "csvFiles";
 
         public CsvDatasetManager(EtlContext context)
         {
-            _mapper = new ConnectorMapper(context);
+            _gateway = new CsvGateway(context);
         }
         
         public void SaveCsv(Stream stream, string username, string fileName, long fileLength)
@@ -24,7 +23,11 @@ namespace ETLLibrary.Database
 
             if (!File.Exists(Path + "/" + username + "/" + fileName))
             {
-                _mapper.AddNewFile(username, fileName);
+                var info = new DatasetInfo()
+                {
+                    Name = fileName
+                };
+                _gateway.AddDataset(username, info);
 
                 var bytes = new byte[fileLength];
                 stream.Read(bytes);
@@ -52,7 +55,7 @@ namespace ETLLibrary.Database
 
         public List<string> GetCsvFiles(string username)
         {
-            return _mapper.GetUserFiles(username);
+            return _gateway.GetUserDatasets(username);
         }
 
         public string GetCsvContent(string username, string fileName)
@@ -76,7 +79,7 @@ namespace ETLLibrary.Database
         public void DeleteCsv(User user, string fileName)
         {
             File.Delete(Path + "/" + user.Username + "/" + fileName);
-            _mapper.DeleteFile(fileName, user.Id);
+            _gateway.DeleteDataset(fileName, user.Id);
         }
     }
 }

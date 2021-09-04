@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-using ETLLibrary.Interfaces;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace ETLLibrary.Database
 {
@@ -8,6 +6,7 @@ namespace ETLLibrary.Database
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Csv> CsvFiles { get; set; }
+        public DbSet<DbConnection> DbConnections { get; set; }
         private const string ConnectionString = "Server=.; Database=ETLDB; Trusted_Connection=True;";
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -20,7 +19,12 @@ namespace ETLLibrary.Database
         {
             modelBuilder.Entity<Csv>()
                 .HasOne(p => p.User)
-                .WithMany(b => b.csvFiles)
+                .WithMany(b => b.CsvFiles)
+                .HasForeignKey(p => p.UserId);
+
+            modelBuilder.Entity<DbConnection>()
+                .HasOne(p => p.User)
+                .WithMany(b => b.DbConnections)
                 .HasForeignKey(p => p.UserId);
         }
     }

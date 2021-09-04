@@ -7,8 +7,10 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Filters
     {
         private Condition _condition;
 
-        public FilterNode(Condition condition)
+        public FilterNode(int id , string name , Condition condition)
         {
+            Id = id;
+            Name = name;
             _condition = condition;
             CreateFilterTransformation();
         }
@@ -18,7 +20,7 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Filters
             var filterTransformation = new FilterTransformation();
             filterTransformation.FilterPredicate = row =>
             {
-                return _condition.Evaluate(row);
+                return ! _condition.Evaluate(row);
             };
             DataFlow = filterTransformation;
         }

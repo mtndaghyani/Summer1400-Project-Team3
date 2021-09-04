@@ -13,6 +13,7 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Aggregations
 
         private AggregationMethod GetAggregationMethodByType()
         {
+            
             if (_aggregationType == AggregationType.Sum)
                 return AggregationMethod.Sum;
             else if (_aggregationType == AggregationType.Count)
@@ -27,9 +28,11 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Aggregations
             throw new Exception("aggregation not supported");
         }
 
-        public AggregationNode(AggregationType aggregationType, string aggregateColumnName,
+        public AggregationNode(int id , string name , AggregationType aggregationType, string aggregateColumnName,
             List<string> groupByColumnNames)
         {
+            Id = id;
+            Name = name;
             _aggregationType = aggregationType;
             _aggregateColumnName = aggregateColumnName;
             _groupByColumnNames = groupByColumnNames;

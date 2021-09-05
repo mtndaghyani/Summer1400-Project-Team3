@@ -25,7 +25,7 @@ namespace ETLLibrary.Database
             {
                 command.Connection.Open();
             }
-            catch (System.Data.SqlClient.SqlException e)
+            catch (Exception e)
             {
                 return null;
             }

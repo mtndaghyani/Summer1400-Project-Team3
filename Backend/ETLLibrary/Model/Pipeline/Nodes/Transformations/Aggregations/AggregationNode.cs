@@ -9,6 +9,7 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Aggregations
     {
         private AggregationType _aggregationType;
         private string _aggregateColumnName;
+        private string _newColumnName;
         private List<string> _groupByColumnNames;
 
         private AggregationMethod GetAggregationMethodByType()
@@ -28,13 +29,14 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Aggregations
             throw new Exception("aggregation not supported");
         }
 
-        public AggregationNode(int id , string name , AggregationType aggregationType, string aggregateColumnName,
+        public AggregationNode(int id , string name , AggregationType aggregationType, string aggregateColumnName, string newColumnName , 
             List<string> groupByColumnNames)
         {
             Id = id;
             Name = name;
             _aggregationType = aggregationType;
             _aggregateColumnName = aggregateColumnName;
+            _newColumnName = newColumnName;
             _groupByColumnNames = groupByColumnNames;
             CreateAggregationsAndGroups();
         }
@@ -65,7 +67,7 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Aggregations
             var aggregateColumn = new AggregateColumn
             {
                 InputValuePropName = _aggregateColumnName,
-                AggregatedValuePropName = _aggregateColumnName + "_" + _aggregationType,
+                AggregatedValuePropName = _newColumnName,
                 AggregationMethod = GetAggregationMethodByType()
             };
             aggregation.AggregateColumns.Add(aggregateColumn);

@@ -18,7 +18,7 @@ namespace TestETLLibrary
             Pipeline pipeline = new Pipeline(1 , "sample");
             CsvSource csvSource = new CsvSource(1, "source from sample csv", "demo.csv");
             AggregationNode aggregationNode =
-                new AggregationNode(2, "simple sum", AggregationType.Sum, "Period", new List<string>(){} );
+                new AggregationNode(2, "simple sum", AggregationType.Sum, "Period", "sum" , new List<string>(){"Series_reference"} );
             CsvDestination csvDestination = new CsvDestination(3, "sample destination", "modified.csv");
             pipeline.AddNode(csvSource);
             pipeline.AddNode(csvDestination);

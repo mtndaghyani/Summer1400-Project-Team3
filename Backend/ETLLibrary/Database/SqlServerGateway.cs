@@ -26,17 +26,19 @@ namespace ETLLibrary.Database
             var user = Context.Users.Include(x => x.DbConnections).Single(u => u.Username == username);
             var dbConnection = new DbConnection()
             {
+                DbName = info.DbName,
                 DbPassword = info.DbPassword,
                 DbUsername = info.DbUsername,
                 Name = info.Name,
                 Url = info.Url,
+                Table = info.Table,
                 User = user
             };
             user.DbConnections.Add(dbConnection);
             Context.SaveChanges();
         }
 
-        public void DeleteDataset(string datasetName, int userId)
+        public void DeleteDataset( string datasetName, int userId)
         {
             var dbConnection = Context.DbConnections.SingleOrDefault(x => x.Name == datasetName && x.UserId == userId);
             if (dbConnection == null) return;

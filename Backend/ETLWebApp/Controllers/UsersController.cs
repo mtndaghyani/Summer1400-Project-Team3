@@ -15,13 +15,15 @@ namespace ETLWebApp.Controllers
     {
         private EtlContext _context;
         private IAuthenticator _authenticator;
-        private ICsvDatasetManager _manager;
+        private ICsvDatasetManager _csvManager;
+        private ISqlServerDatasetManager _sqlServerManager;
 
-        public UsersController(EtlContext context, IAuthenticator authenticator, ICsvDatasetManager manager)
+        public UsersController(EtlContext context, IAuthenticator authenticator, ICsvDatasetManager csvManager, ISqlServerDatasetManager sqlServerManager)
         {
             _context = context;
             _authenticator = authenticator;
-            _manager = manager;
+            _csvManager = csvManager;
+            _sqlServerManager = sqlServerManager;
         }
 
         [HttpPost("signup")]
@@ -67,7 +69,18 @@ namespace ETLWebApp.Controllers
             {
                 return NotFound(new {Message = "User with this username not found"});
             }
-            return Ok(new {CsvFiles = _manager.GetCsvFiles(username)});
+            return Ok(new {CsvFiles = _csvManager.GetCsvFiles(username)});
+        }
+
+        [HttpGet("{username}/sqlservers")]
+        public ActionResult GetSqlServerDbNames(string username)
+        {
+            var user = _context.Users.SingleOrDefault(u => u.Username == username);
+            if (user == null)
+            {
+                return NotFound(new {Message = "User with this username not found"});
+            }
+            return Ok(new {DbNames = _sqlServerManager.GetDatasets(username)});
         }
     }
 }

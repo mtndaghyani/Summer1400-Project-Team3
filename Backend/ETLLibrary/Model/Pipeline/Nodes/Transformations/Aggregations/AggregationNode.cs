@@ -26,7 +26,7 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Aggregations
                 return AggregationMethod.Max;
             else if (_aggregationType == AggregationType.Min)
                 return AggregationMethod.Min;
-            throw new Exception("aggregation not supported");
+            throw new NotImplementedException("aggregation not supported");
         }
 
         public AggregationNode(int id , string name , AggregationType aggregationType, string aggregateColumnName, string newColumnName , 

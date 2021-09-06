@@ -24,7 +24,7 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Filters.Conditions
                 return leftResult & rightResult;
             else if (_logicOperator == LogicOperator.Or)
                 return leftResult | rightResult;
-            throw new Exception("logic operator not supported");
+            throw new NotImplementedException("logic operator not supported");
         }
     }
 }

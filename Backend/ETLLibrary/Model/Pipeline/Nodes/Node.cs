@@ -8,6 +8,5 @@ namespace ETLLibrary.Model.Pipeline.Nodes
     {
         public int Id { get; set; }
         protected string Name;
-        public abstract void LinkTo(Node node);
     }
 }

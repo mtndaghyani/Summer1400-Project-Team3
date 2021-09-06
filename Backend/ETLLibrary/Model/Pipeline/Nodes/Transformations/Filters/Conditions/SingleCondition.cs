@@ -28,7 +28,7 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Filters.Conditions
                 return IsGreaterThan(dictionary);
             else if (_operator == Operator.LessThan)
                 return IsLessThan(dictionary);
-            throw new Exception("operator not supported");
+            throw new NotImplementedException("operator not supported");
         }
 
         private bool IsGreaterThan(IDictionary<string, object> dictionary)
@@ -39,7 +39,7 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Filters.Conditions
                 return Int32.Parse(dictionary[_columnName].ToString()) > Int32.Parse(_desiredValue);
             else if(_type == Type.Double)
                 return Double.Parse(dictionary[_columnName].ToString()) > Double.Parse(_desiredValue);
-            throw new Exception("type not supported");
+            throw new NotImplementedException("type not supported");
         }
         private bool IsLessThan(IDictionary<string, object> dictionary)
         {
@@ -49,7 +49,7 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Filters.Conditions
                 return Int32.Parse(dictionary[_columnName].ToString()) < Int32.Parse(_desiredValue);
             else if(_type == Type.Double)
                 return Double.Parse(dictionary[_columnName].ToString()) < Double.Parse(_desiredValue);
-            throw new Exception("type not supported");
+            throw new NotImplementedException("type not supported");
         }
     }
 }

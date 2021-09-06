@@ -7,9 +7,5 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Destinations
     {
         public Node Parent { get; set; }
         public IDataFlowDestination<ExpandoObject> DataFlow;
-        public override void LinkTo(Node node)
-        {
-            throw new System.NotImplementedException("not allowed");
-        }
     }
 }

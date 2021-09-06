@@ -22,7 +22,7 @@ namespace ETLWebApp.Controllers
         }
 
         [HttpPost("create/")]
-        public ActionResult Create([FromForm]CreateModel model, string token)
+        public ActionResult Create([FromForm] CreateModel model, string token)
         {
             var user = Authenticator.GetUserFromToken(token);
             if (user == null)
@@ -50,7 +50,7 @@ namespace ETLWebApp.Controllers
                 return Unauthorized(new {Message = "First login."});
             }
 
-            var response = _manager.GetCsvContent(user.Username, filename);
+            var response = _manager.GetCsvContent(user, filename);
             if (response == null)
             {
                 return NotFound(new {Message = "Not Found"});

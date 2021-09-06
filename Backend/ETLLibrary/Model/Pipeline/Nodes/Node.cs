@@ -6,8 +6,8 @@ namespace ETLLibrary.Model.Pipeline.Nodes
 {
     public abstract class Node
     {
-        protected DataFlowSource<ExpandoObject> DataFlow;
         public int Id { get; set; }
-        public string Name { get; set; }
+        protected string Name;
+        public abstract void LinkTo(Node node);
     }
 }

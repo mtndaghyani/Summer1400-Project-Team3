@@ -1,4 +1,5 @@
 ﻿using ETLLibrary.Database;
+using ETLLibrary.Database.Models;
 
 namespace ETLLibrary.Interfaces
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace ETLLibrary.Database
+namespace ETLLibrary.Authentication
 {
     public static class TokenGenerator
     {

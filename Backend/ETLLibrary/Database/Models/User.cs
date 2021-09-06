@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Data.Common;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using DbConnection = ETLLibrary.Database.Models.DbConnection;
 
-namespace ETLLibrary.Database
+namespace ETLLibrary.Database.Models
 {
     public class User
     {
@@ -13,5 +14,9 @@ namespace ETLLibrary.Database
         public string Password { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        
+        public List<Csv> CsvFiles { get; set; }
+        
+        public List<DbConnection> DbConnections { get; set; }
     }
 }

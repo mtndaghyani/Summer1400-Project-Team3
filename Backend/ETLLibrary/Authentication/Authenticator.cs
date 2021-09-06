@@ -1,19 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ETLLibrary.Database;
+using ETLLibrary.Database.Models;
 using ETLLibrary.Interfaces;
 
 namespace ETLLibrary.Authentication
 {
-    public class Authenticator: IAuthenticator
+    public class Authenticator : IAuthenticator
     {
         private EtlContext _context;
-        private Dictionary<string, User> _tokens;
+        public static Dictionary<string, User> Tokens = new Dictionary<string, User>();
+
+        public static User GetUserFromToken(string token)
+        {
+            return !Tokens.ContainsKey(token) ? null : Tokens[token];
+        }
 
         public Authenticator(EtlContext context)
         {
             _context = context;
-            _tokens = new Dictionary<string, User>();
         }
 
         public User ValidateUser(string username, string password)
@@ -24,13 +29,13 @@ namespace ETLLibrary.Authentication
         public string Login(User user)
         {
             var token = TokenGenerator.Generate(16);
-            _tokens.Add(token, user);
+            Tokens.Add(token, user);
             return token;
         }
 
         public void Logout(string token)
         {
-            _tokens.Remove(token);
+            Tokens.Remove(token);
         }
     }
 }

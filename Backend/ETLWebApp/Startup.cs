@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ETLLibrary.Authentication;
 using ETLLibrary.Database;
+using ETLLibrary.Database.Managers;
 using ETLLibrary.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,6 +36,8 @@ namespace ETLWebApp
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "ETLWebApp", Version = "v1"}); });
             services.AddDbContext<EtlContext>();
             services.AddScoped(typeof(IAuthenticator), typeof(Authenticator));
+            services.AddScoped(typeof(ICsvDatasetManager), typeof(CsvDatasetManager));
+            services.AddScoped(typeof(ISqlServerDatasetManager), typeof(SqlServerDatasetManager));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

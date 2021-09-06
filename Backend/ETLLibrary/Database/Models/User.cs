@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Common;
+using DbConnection = ETLLibrary.Database.Models.DbConnection;
 
-namespace ETLLibrary.Database
+namespace ETLLibrary.Database.Models
 {
     public class User
     {

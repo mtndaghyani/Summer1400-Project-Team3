@@ -2,6 +2,7 @@
 using System.Linq;
 using ETLLibrary.Authentication;
 using ETLLibrary.Database;
+using ETLLibrary.Database.Models;
 using ETLLibrary.Interfaces;
 using ETLWebApp.Models.AuthenticationModels;
 using Microsoft.AspNetCore.Mvc;

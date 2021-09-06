@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ETLLibrary.Database;
+using ETLLibrary.Database.Models;
 using ETLLibrary.Interfaces;
 
 namespace ETLLibrary.Authentication

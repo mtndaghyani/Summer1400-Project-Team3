@@ -1,4 +1,4 @@
-﻿namespace ETLLibrary.Database
+﻿namespace ETLLibrary.Database.Utils
 {
     public class DatasetInfo
     {

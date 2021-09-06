@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ETLLibrary.Database
+namespace ETLLibrary.Database.Models
 {
     public class Csv
     {

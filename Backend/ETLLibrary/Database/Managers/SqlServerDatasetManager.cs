@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using ETLLibrary.Database.Gataways;
+using ETLLibrary.Database.Models;
+using ETLLibrary.Database.Utils;
 using ETLLibrary.Interfaces;
 using Microsoft.Data.SqlClient;
 
-namespace ETLLibrary.Database
+namespace ETLLibrary.Database.Managers
 {
     public class SqlServerDatasetManager : ISqlServerDatasetManager
     {

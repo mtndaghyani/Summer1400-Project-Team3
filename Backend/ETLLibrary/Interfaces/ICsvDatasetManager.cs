@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using ETLLibrary.Database;
+using ETLLibrary.Database.Models;
 
 namespace ETLLibrary.Interfaces
 {

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ETLLibrary.Database.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ETLLibrary.Database
 {

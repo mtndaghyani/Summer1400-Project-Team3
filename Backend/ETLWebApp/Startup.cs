@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ETLLibrary.Authentication;
 using ETLLibrary.Database;
+using ETLLibrary.Database.Managers;
 using ETLLibrary.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

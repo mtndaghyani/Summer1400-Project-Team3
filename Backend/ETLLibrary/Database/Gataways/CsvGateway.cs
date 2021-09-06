@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ETLLibrary.Database.Models;
+using ETLLibrary.Database.Utils;
 using ETLLibrary.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace ETLLibrary.Database
+namespace ETLLibrary.Database.Gataways
 {
     public class CsvGateway : IDatabaseGateway
     {

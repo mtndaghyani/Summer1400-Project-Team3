@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ETLLibrary.Database.Gataways;
+using ETLLibrary.Database.Models;
+using ETLLibrary.Database.Utils;
 using ETLLibrary.Interfaces;
 
-namespace ETLLibrary.Database
+namespace ETLLibrary.Database.Managers
 {
     public class CsvDatasetManager : ICsvDatasetManager
     {
@@ -31,7 +34,7 @@ namespace ETLLibrary.Database
 
                 var bytes = new byte[fileLength];
                 stream.Read(bytes);
-                var content = bytes.Aggregate("", (current, b) => current + Convert.ToChar(b));
+                var content = bytes.Aggregate("", (current, b) => current + Convert.ToChar((byte) b));
 
                 File.WriteAllText(Path + "/" + username + "/" + fileName, content);
             }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ETLLibrary.Database
+namespace ETLLibrary.Database.Models
 {
     public class DbConnection
     {

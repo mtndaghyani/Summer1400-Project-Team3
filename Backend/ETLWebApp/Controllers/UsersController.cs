@@ -8,17 +8,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ETLWebApp.Controllers
 {
-    
     [ApiController]
     [Route("users/")]
-    public class UsersController: Controller
+    public class UsersController : Controller
     {
         private EtlContext _context;
         private IAuthenticator _authenticator;
         private ICsvDatasetManager _csvManager;
         private ISqlServerDatasetManager _sqlServerManager;
 
-        public UsersController(EtlContext context, IAuthenticator authenticator, ICsvDatasetManager csvManager, ISqlServerDatasetManager sqlServerManager)
+        public UsersController(EtlContext context, IAuthenticator authenticator, ICsvDatasetManager csvManager,
+            ISqlServerDatasetManager sqlServerManager)
         {
             _context = context;
             _authenticator = authenticator;
@@ -51,11 +51,12 @@ namespace ETLWebApp.Controllers
                 var token = _authenticator.Login(user);
                 return Ok(new {Token = token});
             }
+
             return Unauthorized("Authentication failed");
         }
 
         [HttpPost("logout")]
-        public ActionResult Logout(LogoutModel  model)
+        public ActionResult Logout(LogoutModel model)
         {
             _authenticator.Logout(model.Token);
             return Ok(new {Message = "User logout successfully!"});
@@ -69,6 +70,7 @@ namespace ETLWebApp.Controllers
             {
                 return NotFound(new {Message = "User with this username not found"});
             }
+
             return Ok(new {CsvFiles = _csvManager.GetCsvFiles(username)});
         }
 
@@ -80,7 +82,21 @@ namespace ETLWebApp.Controllers
             {
                 return NotFound(new {Message = "User with this username not found"});
             }
+
             return Ok(new {DbNames = _sqlServerManager.GetDatasets(username)});
+        }
+
+
+        [HttpGet("{token}")]
+        public ActionResult GetUserByToken(string token)
+        {
+            var user = Authenticator.GetUserFromToken(token);
+            if (user == null)
+            {
+                return Unauthorized(new {Message = "First login."});
+            }
+
+            return Ok(user);
         }
     }
 }

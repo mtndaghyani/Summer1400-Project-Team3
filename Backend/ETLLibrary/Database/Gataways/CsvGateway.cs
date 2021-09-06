@@ -26,11 +26,14 @@ namespace ETLLibrary.Database.Gataways
         public void AddDataset(string username, string fileName, CsvInfo info)
         {
             var user = Context.Users.Include(x => x.CsvFiles).Single(u => u.Username == username);
-            var csvFile = new Csv() { Name = fileName,
+            var csvFile = new Csv()
+            {
+                Name = fileName,
                 ColDelimiter = info.ColDelimiter,
-                RowDelimiter = info.RowDelimiter, 
+                RowDelimiter = info.RowDelimiter,
                 HasHeader = info.HasHeader,
-                User = user };
+                User = user
+            };
             user.CsvFiles.Add(csvFile);
             Context.SaveChanges();
         }
@@ -42,6 +45,11 @@ namespace ETLLibrary.Database.Gataways
             Context.CsvFiles.Remove(csv);
             Context.SaveChanges();
         }
-        
+
+        public Csv GetDataset(string fileName, int userId)
+        {
+            var csv = Context.CsvFiles.SingleOrDefault(x => x.Name == fileName && x.UserId == userId);
+            return csv;
+        }
     }
 }

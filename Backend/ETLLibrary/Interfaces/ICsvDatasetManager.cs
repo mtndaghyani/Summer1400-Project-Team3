@@ -11,7 +11,7 @@ namespace ETLLibrary.Interfaces
         void SaveCsv(Stream stream, string username, string fileName, CsvInfo info, long fileLength);
         List<string> GetCsvFiles(string username);
 
-        string GetCsvContent(string username, string fileName);
+        List<List<string>> GetCsvContent(User user, string fileName);
 
         void DeleteCsv(User user, string fileName);
     }

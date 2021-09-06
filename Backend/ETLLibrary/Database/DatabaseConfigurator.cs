@@ -9,7 +9,6 @@
 
         public static string GetConnectionString(string dbName, string dbUsername, string dbPassword, string url)
         {
-            // return $"Server={url};Database={dbName};User Id={dbUsername};Password={dbPassword};";
             return $"Data Source={url};Initial Catalog={dbName};Integrated Security=True;User ID={dbUsername};Password={dbPassword};Pooling=False;Application Name=sqlops-connection-string";
         }
     }

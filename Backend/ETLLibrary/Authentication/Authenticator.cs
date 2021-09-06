@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ETLLibrary.Database;
 using ETLLibrary.Interfaces;
@@ -8,7 +9,7 @@ namespace ETLLibrary.Authentication
     public class Authenticator : IAuthenticator
     {
         private EtlContext _context;
-        public static Dictionary<string, User> Tokens;
+        public static Dictionary<string, User> Tokens = new Dictionary<string, User>();
 
         public static User GetUserFromToken(string token)
         {
@@ -18,7 +19,6 @@ namespace ETLLibrary.Authentication
         public Authenticator(EtlContext context)
         {
             _context = context;
-            Tokens = new Dictionary<string, User>();
         }
 
         public User ValidateUser(string username, string password)

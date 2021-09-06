@@ -19,18 +19,14 @@ namespace ETLLibrary.Database.Managers
             _gateway = new CsvGateway(context);
         }
         
-        public void SaveCsv(Stream stream, string username, string fileName, long fileLength)
+        public void SaveCsv(Stream stream, string username, string fileName, CsvInfo info, long fileLength)
         {
             EnsureDirectoryCreated(Path);
             EnsureUserDirectoryCreated(Path, username);
 
             if (!File.Exists(Path + "/" + username + "/" + fileName))
             {
-                var info = new DatasetInfo()
-                {
-                    Name = fileName
-                };
-                _gateway.AddDataset(username, info);
+                _gateway.AddDataset(username, fileName, info);
 
                 var bytes = new byte[fileLength];
                 stream.Read(bytes);

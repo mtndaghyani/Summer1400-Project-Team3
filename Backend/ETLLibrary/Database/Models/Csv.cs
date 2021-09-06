@@ -8,5 +8,8 @@ namespace ETLLibrary.Database.Models
         public int UserId { get; set; }
         public string Name { get; set; }
         public User User { get; set; }
+        public string ColDelimiter { get; set; }
+        public string RowDelimiter { get; set; }
+        public bool HasHeader { get; set; }
     }
 }

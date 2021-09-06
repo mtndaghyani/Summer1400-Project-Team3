@@ -23,10 +23,14 @@ namespace ETLLibrary.Database.Gataways
             return user.CsvFiles.Select(document => document.Name).ToList();
         }
 
-        public void AddDataset(string username, DatasetInfo info)
+        public void AddDataset(string username, string fileName, CsvInfo info)
         {
             var user = Context.Users.Include(x => x.CsvFiles).Single(u => u.Username == username);
-            var csvFile = new Csv() { Name = info.Name, User = user };
+            var csvFile = new Csv() { Name = fileName,
+                ColDelimiter = info.ColDelimiter,
+                RowDelimiter = info.RowDelimiter, 
+                HasHeader = info.HasHeader,
+                User = user };
             user.CsvFiles.Add(csvFile);
             Context.SaveChanges();
         }

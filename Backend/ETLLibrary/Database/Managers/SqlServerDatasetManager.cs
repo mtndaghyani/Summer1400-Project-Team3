@@ -54,5 +54,11 @@ namespace ETLLibrary.Database.Managers
         {
             return _gateway.GetUserDatasets(username);
         }
+
+
+        public DbConnection GetDbConnection(User user, string name)
+        {
+            return _gateway.GetDbConnection(name, user.Id);
+        }
     }
 }

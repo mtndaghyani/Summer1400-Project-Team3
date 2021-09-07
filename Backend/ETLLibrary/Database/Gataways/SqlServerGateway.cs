@@ -47,5 +47,12 @@ namespace ETLLibrary.Database.Gataways
             Context.DbConnections.Remove(dbConnection);
             Context.SaveChanges();
         }
+
+
+        public DbConnection GetDbConnection(string name, int userId)
+        {
+            var dbConnection = Context.DbConnections.SingleOrDefault(w => w.Name == name && w.UserId == userId);
+            return dbConnection;
+        }
     }
 }

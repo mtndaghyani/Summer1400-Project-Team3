@@ -7,9 +7,7 @@ namespace ETLLibrary.Interfaces
     public interface IDatabaseGateway
     {
         List<string> GetUserDatasets(string username);
-
-        void AddDataset(string username, DatasetInfo info);
-
+        
         void DeleteDataset(string datasetName, int userId);
     }
 }

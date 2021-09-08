@@ -34,7 +34,7 @@ namespace ETLWebApp.Controllers
                 _manager.CreateDataset(user.Username, model);            }
             catch (Exception e)
             {
-                return Conflict(new {Message = "Dataset with this name already exists"});
+                return Conflict(new {Message = e.Message});
             }
             return Ok(new {Message = "Dataset added successfully."});
         }

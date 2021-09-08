@@ -1,4 +1,5 @@
-﻿using ETLLibrary.Authentication;
+﻿using System;
+using ETLLibrary.Authentication;
 using ETLLibrary.Database.Utils;
 using ETLLibrary.Interfaces;
 using ETLWebApp.Models.CsvModels;
@@ -33,7 +34,14 @@ namespace ETLWebApp.Controllers
                 RowDelimiter = model.RowDelimiter,
                 HasHeader = model.HasHeader
             };
-            _manager.SaveCsv(model.File.OpenReadStream(), user.Username, model.File.FileName, info, model.File.Length);
+            try
+            {
+                _manager.SaveCsv(model.File.OpenReadStream(), user.Username, model.File.FileName, info, model.File.Length);
+            }
+            catch (Exception e)
+            {
+                return Conflict(new {Message = e.Message});
+            }
             return Ok(new {Message = "File uploaded successfully."});
         }
 

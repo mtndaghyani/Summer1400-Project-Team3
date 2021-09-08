@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ETLLibrary.Database.Models;
 using ETLLibrary.Database.Utils;
@@ -26,19 +27,34 @@ namespace ETLLibrary.Database.Gataways
         public void AddDataset(string username, string fileName, CsvInfo info)
         {
             var user = Context.Users.Include(x => x.CsvFiles).Single(u => u.Username == username);
-            var csvFile = new Csv()
+            if (!DatasetExist(info, user))
             {
-                Name = info.Name,
-                FileName = fileName,
-                ColDelimiter = info.ColDelimiter,
-                RowDelimiter = info.RowDelimiter,
-                HasHeader = info.HasHeader,
-                User = user
-            };
-            user.CsvFiles.Add(csvFile);
-            Context.SaveChanges();
+                var csvFile = new Csv()
+                {
+                    Name = info.Name,
+                    FileName = fileName,
+                    ColDelimiter = info.ColDelimiter,
+                    RowDelimiter = info.RowDelimiter,
+                    HasHeader = info.HasHeader,
+                    User = user
+                };
+                user.CsvFiles.Add(csvFile);
+                Context.SaveChanges();
+            }
+            else
+            {
+                throw new Exception("Dataset with this name already exists");
+            }
         }
 
+        
+        private bool DatasetExist(CsvInfo datasetInfo, User user)
+        {
+            var dbConnection =
+                Context.CsvFiles.SingleOrDefault(x => x.Name == datasetInfo.Name && x.UserId == user.Id);
+            return dbConnection != null;
+        }
+        
         public void DeleteDataset(string name, int userId)
         {
             var csv = Context.CsvFiles.SingleOrDefault(x => x.Name == name && x.UserId == userId);

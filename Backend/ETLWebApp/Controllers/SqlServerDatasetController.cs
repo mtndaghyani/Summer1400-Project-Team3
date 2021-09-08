@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ETLLibrary;
 using ETLLibrary.Authentication;
-using ETLLibrary.Database;
 using ETLLibrary.Database.Utils;
 using ETLLibrary.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -43,14 +42,7 @@ namespace ETLWebApp.Controllers
             _manager.DeleteDataset(name, user);
             return Ok(new {Message = $"Dataset {name} deleted successfully."});
         }
-
-        [Route("{name}")]
-        [HttpGet]
-        public ActionResult GetContent(string token, string name)
-        {
-            //TODO:
-            return null;
-        }
+        
         
         [HttpGet("tables/")]
         public ActionResult GetTables( string dbName, string dbUsername, string dbPassword, string url)
@@ -65,5 +57,41 @@ namespace ETLWebApp.Controllers
                 return Ok(new {TableNames = result});
             }
         }
+        
+        
+        
+        [Route("{name}")]
+        [HttpGet]
+        public ActionResult GetSerializedContent(string token, string name)
+        {
+            var user = Authenticator.GetUserFromToken(token);
+            if (user == null)
+            {
+                return Unauthorized(new {Message = "First login."});
+            }
+
+            var dbConnection = _manager.GetDbConnection(user, name);
+
+            var info = new DatasetInfo()
+            {
+                DbName = dbConnection.DbName,
+                DbPassword = dbConnection.DbPassword,
+                DbUsername = dbConnection.DbPassword,
+                Url = dbConnection.Url,
+                Table = dbConnection.Table
+            };
+            
+            var serializer = new SqlServerSerializer();
+            var result = serializer.Serialize(info);
+            if (result == null)
+            {
+                return NotFound(new {Message = "Connection interrupted"});
+            }
+            else
+            {
+                return Ok(new {Content = result});
+            }
+        }
+        
     }
 }

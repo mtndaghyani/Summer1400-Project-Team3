@@ -11,5 +11,7 @@ namespace ETLLibrary.Interfaces
         void CreateDataset(string username, DatasetInfo info);
         void DeleteDataset( string name, User user);
         List<string> GetDatasets(string username);
+
+        DbConnection GetDbConnection(User user, string name);
     }
 }

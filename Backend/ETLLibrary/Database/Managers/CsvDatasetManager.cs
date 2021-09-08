@@ -11,32 +11,30 @@ namespace ETLLibrary.Database.Managers
 {
     public class CsvDatasetManager : ICsvDatasetManager
     {
-        private CsvGateway _gateway;
         private const string Path = "csvFiles";
+        private CsvGateway _gateway;
+        private ICsvSerializer _serializer;
 
-        public CsvDatasetManager(EtlContext context)
+        public CsvDatasetManager(EtlContext context, ICsvSerializer serializer)
         {
+            _serializer = serializer;
             _gateway = new CsvGateway(context);
         }
-        
-        public void SaveCsv(Stream stream, string username, string fileName, long fileLength)
+
+        public void SaveCsv(Stream stream, string username, string fileName, CsvInfo info, long fileLength)
         {
             EnsureDirectoryCreated(Path);
             EnsureUserDirectoryCreated(Path, username);
 
-            if (!File.Exists(Path + "/" + username + "/" + fileName))
+            if (!File.Exists(GetFilePath(username, fileName)))
             {
-                var info = new DatasetInfo()
-                {
-                    Name = fileName
-                };
-                _gateway.AddDataset(username, info);
+                _gateway.AddDataset(username, fileName, info);
 
                 var bytes = new byte[fileLength];
                 stream.Read(bytes);
                 var content = bytes.Aggregate("", (current, b) => current + Convert.ToChar((byte) b));
 
-                File.WriteAllText(Path + "/" + username + "/" + fileName, content);
+                File.WriteAllText(GetFilePath(username, fileName), content);
             }
         }
 
@@ -47,12 +45,12 @@ namespace ETLLibrary.Database.Managers
                 Directory.CreateDirectory(path);
             }
         }
-        
+
         private void EnsureUserDirectoryCreated(string path, string username)
         {
-            if (!Directory.Exists(path+"/"+username))
+            if (!Directory.Exists(path + "/" + username))
             {
-                Directory.CreateDirectory(path+"/"+username);
+                Directory.CreateDirectory(path + "/" + username);
             }
         }
 
@@ -61,27 +59,36 @@ namespace ETLLibrary.Database.Managers
             return _gateway.GetUserDatasets(username);
         }
 
-        public string GetCsvContent(string username, string fileName)
+        public List<List<string>> GetCsvContent(User user, string fileName)
         {
-            if (FileExists(username, fileName))
+            if (FileExists(user.Username, fileName))
             {
-                string content = File.ReadAllText(Path + "/" + username + "/" + fileName);
-                return content;
+                var csv = _gateway.GetDataset(fileName, user.Id);
+                return _serializer.Serialize(csv, GetFilePath(user.Username, fileName));
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
+        }
+
+        private static string GetFilePath(string username, string fileName)
+        {
+            return Path + "/" + username + "/" + fileName;
         }
 
         private bool FileExists(string username, string fileName)
         {
-            return Directory.Exists(Path) && Directory.Exists(Path+"/"+username) && File.Exists(Path+"/" + username + "/" + fileName);
+            return Directory.Exists(Path) && Directory.Exists(GetUserDirectoryPath(username)) &&
+                   File.Exists(Path + "/" + username + "/" + fileName);
+        }
+
+        private static string GetUserDirectoryPath(string username)
+        {
+            return Path + "/" + username;
         }
 
         public void DeleteCsv(User user, string fileName)
         {
-            File.Delete(Path + "/" + user.Username + "/" + fileName);
+            File.Delete(GetFilePath(user.Username, fileName));
             _gateway.DeleteDataset(fileName, user.Id);
         }
     }

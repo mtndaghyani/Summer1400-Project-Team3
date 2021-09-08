@@ -2,7 +2,7 @@
 
 namespace ETLLibrary.Migrations
 {
-    public partial class SqlServerDb : Migration
+    public partial class UpdateDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -30,7 +30,10 @@ namespace ETLLibrary.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ColDelimiter = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RowDelimiter = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HasHeader = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -18,14 +18,23 @@ namespace ETLLibrary.Migrations
                 .HasAnnotation("ProductVersion", "5.0.9")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("ETLLibrary.Database.Csv", b =>
+            modelBuilder.Entity("ETLLibrary.Database.Models.Csv", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("ColDelimiter")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasHeader")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RowDelimiter")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")
@@ -38,7 +47,7 @@ namespace ETLLibrary.Migrations
                     b.ToTable("CsvFiles");
                 });
 
-            modelBuilder.Entity("ETLLibrary.Database.DbConnection", b =>
+            modelBuilder.Entity("ETLLibrary.Database.Models.DbConnection", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -73,7 +82,7 @@ namespace ETLLibrary.Migrations
                     b.ToTable("DbConnections");
                 });
 
-            modelBuilder.Entity("ETLLibrary.Database.User", b =>
+            modelBuilder.Entity("ETLLibrary.Database.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -100,9 +109,9 @@ namespace ETLLibrary.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ETLLibrary.Database.Csv", b =>
+            modelBuilder.Entity("ETLLibrary.Database.Models.Csv", b =>
                 {
-                    b.HasOne("ETLLibrary.Database.User", "User")
+                    b.HasOne("ETLLibrary.Database.Models.User", "User")
                         .WithMany("CsvFiles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -111,9 +120,9 @@ namespace ETLLibrary.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ETLLibrary.Database.DbConnection", b =>
+            modelBuilder.Entity("ETLLibrary.Database.Models.DbConnection", b =>
                 {
-                    b.HasOne("ETLLibrary.Database.User", "User")
+                    b.HasOne("ETLLibrary.Database.Models.User", "User")
                         .WithMany("DbConnections")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -122,7 +131,7 @@ namespace ETLLibrary.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ETLLibrary.Database.User", b =>
+            modelBuilder.Entity("ETLLibrary.Database.Models.User", b =>
                 {
                     b.Navigation("CsvFiles");
 

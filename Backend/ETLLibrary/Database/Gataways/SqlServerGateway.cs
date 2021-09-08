@@ -44,7 +44,7 @@ namespace ETLLibrary.Database.Gataways
             }
             else
             {
-                throw new Exception("Dataset exists.");
+                throw new Exception("Dataset with this name already exists");
             }
         }
 

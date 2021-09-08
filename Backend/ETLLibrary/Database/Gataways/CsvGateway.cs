@@ -27,7 +27,7 @@ namespace ETLLibrary.Database.Gataways
         public void AddDataset(string username, string fileName, CsvInfo info)
         {
             var user = Context.Users.Include(x => x.CsvFiles).Single(u => u.Username == username);
-            if (!DatasetExist(info, user))
+            if (!IDatabaseGateway.DatasetExist(Context, info.Name, user))
             {
                 var csvFile = new Csv()
                 {
@@ -47,14 +47,6 @@ namespace ETLLibrary.Database.Gataways
             }
         }
 
-        
-        private bool DatasetExist(CsvInfo datasetInfo, User user)
-        {
-            var dbConnection =
-                Context.CsvFiles.SingleOrDefault(x => x.Name == datasetInfo.Name && x.UserId == user.Id);
-            return dbConnection != null;
-        }
-        
         public void DeleteDataset(string name, int userId)
         {
             var csv = Context.CsvFiles.SingleOrDefault(x => x.Name == name && x.UserId == userId);

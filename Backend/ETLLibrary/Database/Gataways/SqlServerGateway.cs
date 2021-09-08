@@ -27,7 +27,7 @@ namespace ETLLibrary.Database.Gataways
         public void AddDataset(string username, DatasetInfo info)
         {
             var user = Context.Users.Include(x => x.DbConnections).Single(u => u.Username == username);
-            if (!DatasetExist(info, user))
+            if (!IDatabaseGateway.DatasetExist(Context, info.Name, user))
             {
                 var dbConnection = new DbConnection()
                 {
@@ -47,14 +47,7 @@ namespace ETLLibrary.Database.Gataways
                 throw new Exception("Dataset with this name already exists");
             }
         }
-
-        private bool DatasetExist(DatasetInfo datasetInfo, User user)
-        {
-            var dbConnection =
-                Context.DbConnections.SingleOrDefault(x => x.Name == datasetInfo.Name && x.UserId == user.Id);
-            return dbConnection != null;
-        }
-
+        
         public void DeleteDataset( string datasetName, int userId)
         {
             var dbConnection = Context.DbConnections.SingleOrDefault(x => x.Name == datasetName && x.UserId == userId);

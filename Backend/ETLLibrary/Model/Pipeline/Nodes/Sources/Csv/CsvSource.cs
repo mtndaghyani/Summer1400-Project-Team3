@@ -8,7 +8,7 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Sources.Csv
     {
         private string _csvLocation;
 
-        public CsvSource(int id, string name, string csvLocation)
+        public CsvSource(string id, string name, string csvLocation)
         {
             Id = id;
             Name = name;

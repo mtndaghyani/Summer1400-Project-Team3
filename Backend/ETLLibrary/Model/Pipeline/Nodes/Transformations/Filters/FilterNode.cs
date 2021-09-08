@@ -7,7 +7,7 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Filters
     {
         private Condition _condition;
 
-        public FilterNode(int id , string name , Condition condition)
+        public FilterNode(string id , string name , Condition condition)
         {
             Id = id;
             Name = name;

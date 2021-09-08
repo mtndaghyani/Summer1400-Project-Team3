@@ -8,7 +8,7 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Sources.Sql
     {
         private string _connectionString;
         private string _tableName;
-        public SqlSource(int id, string name, string connectionString, string tableName)
+        public SqlSource(string id, string name, string connectionString, string tableName)
         {
             Id = id;
             Name = name;

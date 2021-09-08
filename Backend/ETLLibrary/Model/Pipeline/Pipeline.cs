@@ -29,14 +29,14 @@ namespace ETLLibrary.Model.Pipeline
             _nodes.Add(node);
         }
 
-        public void LinkNodes(int sourceId, int destinationId)
+        public void LinkNodes(string sourceId, string destinationId)
         {
             Node sourceNode = _nodes.First(x => x.Id == sourceId);
             Node destinationNode = _nodes.First(x => x.Id == destinationId);
             TryLinking(sourceNode, destinationNode);
         }
 
-        public void LinkNodesForJoin(int firstSourceId, int secondSourceId, int joinNodeId) // only used for join
+        public void LinkNodesForJoin(string firstSourceId, string secondSourceId, string joinNodeId) // only used for join
         {
             Node firstSource = _nodes.First(x => x.Id == firstSourceId);
             Node secondSource = _nodes.First(x => x.Id == secondSourceId);

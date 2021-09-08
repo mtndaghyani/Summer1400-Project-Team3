@@ -14,7 +14,7 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Joins
         public MergeJoin<ExpandoObject, ExpandoObject, ExpandoObject> MergeJoin { get; set; }
         public Sort<ExpandoObject> leftSort { get; set; }
         public Sort<ExpandoObject> rightSort { get; set; }
-        public JoinNode(int id, string name, JoinType joinType, string firstTableKey, string secondTableKey)
+        public JoinNode(string id, string name, JoinType joinType, string firstTableKey, string secondTableKey)
         {
             Id = id;
             Name = name;

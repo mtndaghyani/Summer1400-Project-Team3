@@ -82,6 +82,29 @@ namespace ETLLibrary.Migrations
                     b.ToTable("DbConnections");
                 });
 
+            modelBuilder.Entity("ETLLibrary.Database.Models.DbPipeline", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("DbPipelines");
+                });
+
             modelBuilder.Entity("ETLLibrary.Database.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -131,11 +154,24 @@ namespace ETLLibrary.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ETLLibrary.Database.Models.DbPipeline", b =>
+                {
+                    b.HasOne("ETLLibrary.Database.Models.User", "User")
+                        .WithMany("DbPipelines")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ETLLibrary.Database.Models.User", b =>
                 {
                     b.Navigation("CsvFiles");
 
                     b.Navigation("DbConnections");
+
+                    b.Navigation("DbPipelines");
                 });
 #pragma warning restore 612, 618
         }

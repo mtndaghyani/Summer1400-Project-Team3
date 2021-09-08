@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using DbConnection = ETLLibrary.Database.Models.DbConnection;
 
 namespace ETLLibrary.Database.Models
 {
@@ -18,5 +17,6 @@ namespace ETLLibrary.Database.Models
         public List<Csv> CsvFiles { get; set; }
         
         public List<DbConnection> DbConnections { get; set; }
+        public List<DbPipeline> DbPipelines { get; set; }
     }
 }

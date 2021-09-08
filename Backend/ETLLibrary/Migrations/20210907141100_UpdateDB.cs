@@ -2,7 +2,7 @@
 
 namespace ETLLibrary.Migrations
 {
-    public partial class UpdateDb : Migration
+    public partial class UpdateDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -71,6 +71,27 @@ namespace ETLLibrary.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "DbPipelines",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DbPipelines", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DbPipelines_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_CsvFiles_UserId",
                 table: "CsvFiles",
@@ -79,6 +100,11 @@ namespace ETLLibrary.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_DbConnections_UserId",
                 table: "DbConnections",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DbPipelines_UserId",
+                table: "DbPipelines",
                 column: "UserId");
         }
 
@@ -89,6 +115,9 @@ namespace ETLLibrary.Migrations
 
             migrationBuilder.DropTable(
                 name: "DbConnections");
+
+            migrationBuilder.DropTable(
+                name: "DbPipelines");
 
             migrationBuilder.DropTable(
                 name: "Users");

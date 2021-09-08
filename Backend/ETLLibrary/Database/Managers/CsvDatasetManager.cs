@@ -11,7 +11,6 @@ namespace ETLLibrary.Database.Managers
 {
     public class CsvDatasetManager : ICsvDatasetManager
     {
-        private const string Path = "csvFiles";
         private CsvGateway _gateway;
         private ICsvSerializer _serializer;
 
@@ -23,10 +22,10 @@ namespace ETLLibrary.Database.Managers
 
         public void SaveCsv(Stream stream, string username, string fileName, CsvInfo info, long fileLength)
         {
-            EnsureDirectoryCreated(Path);
-            EnsureUserDirectoryCreated(Path, username);
+            EnsureDirectoryCreated(CsvConfigurator.Path);
+            EnsureUserDirectoryCreated(CsvConfigurator.Path, username);
 
-            if (!File.Exists(GetFilePath(username, fileName)))
+            if (!File.Exists(CsvConfigurator.GetFilePath(username, fileName)))
             {
                 _gateway.AddDataset(username, fileName, info);
 
@@ -34,7 +33,7 @@ namespace ETLLibrary.Database.Managers
                 stream.Read(bytes);
                 var content = bytes.Aggregate("", (current, b) => current + Convert.ToChar((byte) b));
 
-                File.WriteAllText(GetFilePath(username, fileName), content);
+                File.WriteAllText(CsvConfigurator.GetFilePath(username, fileName), content);
             }
         }
 
@@ -64,32 +63,22 @@ namespace ETLLibrary.Database.Managers
             var csv = _gateway.GetDataset(name, user.Id);
             if (csv != null && FileExists(user.Username, csv.FileName))
             {
-                return _serializer.Serialize(csv, GetFilePath(user.Username, csv.FileName));
+                return _serializer.Serialize(csv, CsvConfigurator.GetFilePath(user.Username, csv.FileName));
             }
 
             return null;
         }
 
-        private static string GetFilePath(string username, string fileName)
-        {
-            return Path + "/" + username + "/" + fileName;
-        }
-
         private bool FileExists(string username, string fileName)
         {
-            return Directory.Exists(Path) && Directory.Exists(GetUserDirectoryPath(username)) &&
-                   File.Exists(Path + "/" + username + "/" + fileName);
-        }
-
-        private static string GetUserDirectoryPath(string username)
-        {
-            return Path + "/" + username;
+            return Directory.Exists(CsvConfigurator.Path) && Directory.Exists(CsvConfigurator.GetUserDirectoryPath(username)) &&
+                   File.Exists(CsvConfigurator.Path + "/" + username + "/" + fileName);
         }
 
         public void DeleteCsv(User user, string name)
         {
             var csv = _gateway.GetDataset(name, user.Id);
-            File.Delete(GetFilePath(user.Username, csv.FileName));
+            File.Delete(CsvConfigurator.GetFilePath(user.Username, csv.FileName));
             _gateway.DeleteDataset(name, user.Id);
         }
     }

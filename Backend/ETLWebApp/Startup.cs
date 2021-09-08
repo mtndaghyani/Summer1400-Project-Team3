@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Serialization;
 
 namespace ETLWebApp
 {
@@ -41,7 +42,8 @@ namespace ETLWebApp
             services.AddScoped(typeof(ICsvDatasetManager), typeof(CsvDatasetManager));
             services.AddScoped(typeof(ISqlServerDatasetManager), typeof(SqlServerDatasetManager));
             services.AddScoped(typeof(ICsvSerializer), typeof(CsvSerializer));
-            
+            services.AddScoped(typeof(ISqlServerSerializer), typeof(SqlServerSerializer));
+            services.AddScoped(typeof(IPipelineManager), typeof(PipelineManager));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

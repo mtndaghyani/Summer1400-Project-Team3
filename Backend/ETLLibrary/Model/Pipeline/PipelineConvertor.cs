@@ -7,102 +7,231 @@ using ETLLibrary.Model.Pipeline.Nodes.Sources;
 using ETLLibrary.Model.Pipeline.Nodes.Sources.Csv;
 using ETLLibrary.Model.Pipeline.Nodes.Transformations;
 using ETLLibrary.Model.Pipeline.Nodes.Transformations.Aggregations;
+using ETLLibrary.Model.Pipeline.Nodes.Transformations.Filters;
+using ETLLibrary.Model.Pipeline.Nodes.Transformations.Filters.Conditions;
+using ETLLibrary.Model.Pipeline.Nodes.Transformations.Filters.Enums;
 using ETLLibrary.Model.Pipeline.Nodes.Transformations.Joins;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Type = ETLLibrary.Model.Pipeline.Nodes.Transformations.Filters.Enums.Type;
 
 namespace ETLLibrary.Model.Pipeline
 {
     public class PipelineConvertor
     {
-        public static Pipeline GetPipelineFromJson(string jsonString)
+        private string _username;
+        private string _jsonString;
+        private Dictionary<string, string> _joinNodeToSecondDataSet = new();
+        public Pipeline Pipeline { get; }
+
+        public PipelineConvertor(string username, string jsonString)
         {
-            Pipeline pipeline = new Pipeline(1 , "");
-            JObject jObject = JsonConvert.DeserializeObject<JObject>(jsonString);
+            _username = username;
+            _jsonString = jsonString;
+            Pipeline = new Pipeline(1, "");
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(_jsonString);
             JArray nodes = (JArray) jObject["nodes"];
-            CreatePipelineNodes(nodes , pipeline);
+            CreatePipelineNodes(nodes);
             JArray edges = (JArray) jObject["edges"];
-            CreateEdges(edges, pipeline);
-            return pipeline;
+            CreateEdges(edges);
         }
 
-        private static void CreatePipelineNodes(JArray nodes, Pipeline pipeline)
+        private void CreatePipelineNodes(JArray nodes)
         {
             int nodesSize = nodes.Count;
             for (int i = 0; i < nodesSize; ++i)
             {
                 JToken node = nodes[i];
-                AddNode(node , pipeline);
+                AddNode(node);
             }
         }
 
-        private static void AddNode(JToken node, Pipeline pipeline)
+        private void AddNode(JToken node)
         {
             string id = node["id"].ToString();
             string type = node["type"].ToString();
             if (type == "filter")
             {
-                CreateFilterNode(node , pipeline);
+                CreateFilterNode(node);
             }
+
             if (type == "join")
             {
-                CreateJoinNode(node , pipeline);
+                CreateJoinNode(node);
             }
+
             if (type == "aggregate")
             {
-                CreateAggregationNode(node , pipeline);
+                CreateAggregationNode(node);
             }
+
             if (type == "common" && id == "source")
             {
-                CreateSourceNode(node , pipeline);
+                CreateSourceNode(node);
             }
+
             if (type == "common" && id == "destination")
             {
-                CreateDestinationNode(node , pipeline);
+                CreateDestinationNode(node);
             }
         }
 
-        private static void CreateFilterNode(JToken node, Pipeline pipeline)
+        private void CreateFilterNode(JToken node)
         {
-            
+            string id = node["id"].ToString();
+            Condition condition = GetCondition(node["data"]["filterTree"]);
+            FilterNode filterNode = new FilterNode(id, "", condition);
+            Pipeline.AddNode(filterNode);
         }
-        private static void CreateJoinNode(JToken node, Pipeline pipeline)
+
+        private Condition GetCondition(JToken tree)
         {
-            throw new NotImplementedException();
+            JArray nodes = (JArray) tree["nodes"];
+            int nodesSize = nodes.Count;
+            if (nodesSize == 1)
+                return GetSingleCondition(nodes[0]);
+            JArray edges = (JArray) tree["edges"];
+            int edgesSize = edges.Count;
+            Queue<string> queue = new Queue<string>();
+            Dictionary<string, Condition> conditionMapper = new();
+            Dictionary<string, List<Condition>> childMapper = new();
+            Dictionary<string, List<string>> adjacentIds = new();
+            Dictionary<string, LogicOperator> conditionOperator = new();
+            for (int i = 0; i < nodesSize; ++i)
+            {
+                JToken node = nodes[i];
+                adjacentIds[node["id"]?.ToString() ?? string.Empty] = new();
+                if (node["id"]?.ToString()[..9] != "condition")
+                {
+                    if (node["id"]?.ToString()[..2] == "or")
+                        conditionOperator[node["id"]?.ToString()] = LogicOperator.Or;
+                    else if (node["id"]?.ToString()[..3] == "ans")
+                        conditionOperator[node["id"]?.ToString()] = LogicOperator.And;
+                    else
+                        throw new NotImplementedException("logic operator not supported");
+                    continue;
+                }
+
+                conditionMapper[node["id"].ToString()] = GetSingleCondition(node);
+                queue.Enqueue(node["id"].ToString());
+            }
+
+            for (int i = 0; i < edgesSize; ++i)
+            {
+                JToken edge = edges[i];
+                string source = edge["source"]?.ToString();
+                string target = edge["target"]?.ToString();
+                adjacentIds[source ?? string.Empty].Add(target);
+                adjacentIds[target ?? string.Empty].Add(source);
+            }
+
+            while (queue.Count > 0)
+            {
+                string id = queue.Dequeue();
+                int count = adjacentIds[id].Count(x => !conditionMapper.ContainsKey(x));
+                if (count == 0)
+                    return conditionMapper[id];
+                string parent = adjacentIds[id].First(x => !conditionMapper.ContainsKey(x));
+                if (!childMapper.ContainsKey(parent))
+                    childMapper[parent] = new();
+                childMapper[parent].Add(conditionMapper[id]);
+                if (childMapper[parent].Count == 2)
+                {
+                    conditionMapper[parent] = new MultipleCondition(childMapper[parent][0], childMapper[parent][1],
+                        conditionOperator[parent]);
+                    queue.Enqueue(parent);
+                }
+            }
+
+            throw new Exception("impossible to reach");
         }
-        private static void CreateAggregationNode(JToken node, Pipeline pipeline)
+
+        private SingleCondition GetSingleCondition(JToken node)
         {
-            AggregationType aggregationType = AggregationType.Sum;
-            if (node["data"]["operation"].ToString() == "sum")
+            JToken data = node["data"];
+            string operation = node["operation"].ToString();
+            Operator op;
+            if (operation == ">")
+                op = Operator.GreaterThan;
+            else if (operation == "<")
+                op = Operator.LessThan;
+            else if (operation == "=")
+                op = Operator.Equals;
+            else
+                throw new NotImplementedException("operator not supported");
+            SingleCondition singleCondition =
+                new SingleCondition(data["column"]?.ToString(), op, data["value"]?.ToString(), Type.String);
+            return singleCondition;
+        }
+
+        private void CreateJoinNode(JToken node)
+        {
+            JToken data = node["data"];
+            _joinNodeToSecondDataSet[node["id"].ToString()] = data["dataset"]?.ToString();
+            JoinNode joinNode = new JoinNode(node["id"].ToString(), "", JoinType.InnerJoin,
+                data["rightKey"]?.ToString(), data["leftKey"]?.ToString());
+            Pipeline.AddNode(joinNode);
+        }
+
+        private void CreateAggregationNode(JToken node)
+        {
+            AggregationType aggregationType;
+            if (node["data"]["operation"]?.ToString() == "sum")
                 aggregationType = AggregationType.Sum;
-            else if (node["data"]["operation"].ToString() == "count")
+            else if (node["data"]["operation"]?.ToString() == "count")
                 aggregationType = AggregationType.Count;
-            else if (node["data"]["operation"].ToString() == "min")
+            else if (node["data"]["operation"]?.ToString() == "min")
                 aggregationType = AggregationType.Min;
-            else if (node["data"]["operation"].ToString() == "max")
+            else if (node["data"]["operation"]?.ToString() == "max")
                 aggregationType = AggregationType.Max;
-            else if (node["data"]["operation"].ToString() == "average")
+            else if (node["data"]["operation"]?.ToString() == "average")
                 aggregationType = AggregationType.Average;
             else
                 throw new NotImplementedException();
-            TransformationNode transformationNode = new AggregationNode(node["id"].ToString() , "" , aggregationType , node["data"]["column"].ToString() , node["data"]["outputName"].ToString() , node["data"]["groupColumns"].ToObject<List<string>>());
-            pipeline.AddNode(transformationNode);
+            TransformationNode transformationNode = new AggregationNode(node["id"].ToString(), "", aggregationType,
+                node["data"]["column"]?.ToString(), node["data"]["outputName"]?.ToString(),
+                node["data"]["groupColumns"]?.ToObject<List<string>>());
+            Pipeline.AddNode(transformationNode);
         }
-        private static void CreateSourceNode(JToken node, Pipeline pipeline)
+
+        private void CreateSourceNode(JToken node)
         {
-            SourceNode sourceNode = new CsvSource(node["id"].ToString() , "" , "");
-            pipeline.AddNode(sourceNode);
+            SourceNode sourceNode = new CsvSource(node["id"].ToString(), "", "");
+            Pipeline.AddNode(sourceNode);
         }
-        private static void CreateDestinationNode(JToken node, Pipeline pipeline)
+
+        private void CreateDestinationNode(JToken node)
         {
-            DestinationNode destinationNode = new CsvDestination(node["id"].ToString() , "" , "");
-            pipeline.AddNode(destinationNode);
+            DestinationNode destinationNode = new CsvDestination(node["id"].ToString(), "", "");
+            Pipeline.AddNode(destinationNode);
         }
-        
-        private static void CreateEdges(JArray edges, Pipeline pipeline)
+
+        private void CreateEdges(JArray edges)
         {
-            
+            int edgesSize = edges.Count;
+            Dictionary<string, string> nextMapper = new();
+            for (int i = 0; i < edgesSize; ++i)
+            {
+                JToken edge = edges[i];
+                nextMapper[edge["source"]?.ToString() ?? string.Empty] = edge["target"]?.ToString();
+            }
+
+            for (int i = 0; i < edgesSize; ++i)
+            {
+                JToken edge = edges[i];
+                if (edge["source"]?.ToString()[..3] != "add")
+                {
+                    if (nextMapper[edge["target"]?.ToString() ?? string.Empty][..4] == "join")
+                    {
+                        throw new NotImplementedException("join not supported yet");
+                    }
+                    else
+                    {
+                        Pipeline.LinkNodes(edge["source"]?.ToString(),
+                            nextMapper[edge["target"]?.ToString() ?? string.Empty]);
+                    }
+                }
+            }
         }
-        
     }
 }

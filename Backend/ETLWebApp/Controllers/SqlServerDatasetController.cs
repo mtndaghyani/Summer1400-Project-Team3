@@ -11,10 +11,12 @@ namespace ETLWebApp.Controllers
     public class SqlServerDatasetController : Controller
     {
         private ISqlServerDatasetManager _manager;
+        private ISqlServerSerializer _serializer;
 
-        public SqlServerDatasetController(ISqlServerDatasetManager manager)
+        public SqlServerDatasetController(ISqlServerDatasetManager manager, ISqlServerSerializer serializer)
         {
             _manager = manager;
+            _serializer = serializer;
         }
         
         [HttpPost("create/")]
@@ -81,8 +83,8 @@ namespace ETLWebApp.Controllers
                 Table = dbConnection.Table
             };
             
-            var serializer = new SqlServerSerializer();
-            var result = serializer.Serialize(info);
+            
+            var result = _serializer.Serialize(info);
             if (result == null)
             {
                 return NotFound(new {Message = "Connection interrupted"});

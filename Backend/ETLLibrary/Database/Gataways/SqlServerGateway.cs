@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ETLLibrary.Database.Models;
 using ETLLibrary.Database.Utils;
@@ -26,20 +27,27 @@ namespace ETLLibrary.Database.Gataways
         public void AddDataset(string username, DatasetInfo info)
         {
             var user = Context.Users.Include(x => x.DbConnections).Single(u => u.Username == username);
-            var dbConnection = new DbConnection()
+            if (!IDatabaseGateway.DatasetExist(Context, info.Name, user))
             {
-                DbName = info.DbName,
-                DbPassword = info.DbPassword,
-                DbUsername = info.DbUsername,
-                Name = info.Name,
-                Url = info.Url,
-                Table = info.Table,
-                User = user
-            };
-            user.DbConnections.Add(dbConnection);
-            Context.SaveChanges();
+                var dbConnection = new DbConnection()
+                {
+                    DbName = info.DbName,
+                    DbPassword = info.DbPassword,
+                    DbUsername = info.DbUsername,
+                    Name = info.Name,
+                    Url = info.Url,
+                    Table = info.Table,
+                    User = user
+                };
+                user.DbConnections.Add(dbConnection);
+                Context.SaveChanges();
+            }
+            else
+            {
+                throw new Exception("Dataset with this name already exists");
+            }
         }
-
+        
         public void DeleteDataset( string datasetName, int userId)
         {
             var dbConnection = Context.DbConnections.SingleOrDefault(x => x.Name == datasetName && x.UserId == userId);

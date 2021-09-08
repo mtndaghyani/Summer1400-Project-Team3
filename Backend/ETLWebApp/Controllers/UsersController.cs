@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using ETLLibrary.Authentication;
 using ETLLibrary.Database;
 using ETLLibrary.Database.Models;
@@ -88,8 +89,28 @@ namespace ETLWebApp.Controllers
             return Ok(new {DbNames = _sqlServerManager.GetDatasets(username)});
         }
         
+        [HttpGet("{username}/datasets")]
+        public ActionResult GetDatasets(string username)
+        {
+            var user = _context.Users.SingleOrDefault(u => u.Username == username);
+            if (user == null)
+            {
+                return NotFound(new {Message = "User with this username not found"});
+            }
+
+            var csvDatasets = _csvManager.GetCsvFiles(username);
+            var sqlServers = _sqlServerManager.GetDatasets(username);
+
+            var result = new List<Dictionary<string, string>>();
+            
+            csvDatasets.ForEach(csv => result.Add(new Dictionary<string, string>(){{"name", csv}, {"type", "csv"}}));
+            sqlServers.ForEach(sqlServer => result.Add(new Dictionary<string, string>(){{"name", sqlServer}, {"type", "sqlserver"}}));
+
+            return Ok(new {Datasets = result});
+        }
+        
         [HttpGet("{username}/pipelines")]
-        public ActionResult GetTables(string username)
+        public ActionResult GetPipelines(string username)
         {
             var user = _context.Users.SingleOrDefault(u => u.Username == username);
             if (user == null)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ETLLibrary.Database.Models;
 using ETLLibrary.Database.Utils;
@@ -26,29 +27,37 @@ namespace ETLLibrary.Database.Gataways
         public void AddDataset(string username, string fileName, CsvInfo info)
         {
             var user = Context.Users.Include(x => x.CsvFiles).Single(u => u.Username == username);
-            var csvFile = new Csv()
+            if (!IDatabaseGateway.DatasetExist(Context, info.Name, user))
             {
-                Name = fileName,
-                ColDelimiter = info.ColDelimiter,
-                RowDelimiter = info.RowDelimiter,
-                HasHeader = info.HasHeader,
-                User = user
-            };
-            user.CsvFiles.Add(csvFile);
-            Context.SaveChanges();
+                var csvFile = new Csv()
+                {
+                    Name = info.Name,
+                    FileName = fileName,
+                    ColDelimiter = info.ColDelimiter,
+                    RowDelimiter = info.RowDelimiter,
+                    HasHeader = info.HasHeader,
+                    User = user
+                };
+                user.CsvFiles.Add(csvFile);
+                Context.SaveChanges();
+            }
+            else
+            {
+                throw new Exception("Dataset with this name already exists");
+            }
         }
 
-        public void DeleteDataset(string fileName, int userId)
+        public void DeleteDataset(string name, int userId)
         {
-            var csv = Context.CsvFiles.SingleOrDefault(x => x.Name == fileName && x.UserId == userId);
+            var csv = Context.CsvFiles.SingleOrDefault(x => x.Name == name && x.UserId == userId);
             if (csv == null) return;
             Context.CsvFiles.Remove(csv);
             Context.SaveChanges();
         }
 
-        public Csv GetDataset(string fileName, int userId)
+        public Csv GetDataset(string name, int userId)
         {
-            var csv = Context.CsvFiles.SingleOrDefault(x => x.Name == fileName && x.UserId == userId);
+            var csv = Context.CsvFiles.SingleOrDefault(x => x.Name == name && x.UserId == userId);
             return csv;
         }
     }

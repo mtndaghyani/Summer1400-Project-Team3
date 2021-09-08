@@ -28,6 +28,7 @@ namespace ETLWebApp.Controllers
 
             var info = new CsvInfo()
             {
+                Name = model.Name,
                 ColDelimiter = model.ColDelimiter,
                 RowDelimiter = model.RowDelimiter,
                 HasHeader = model.HasHeader
@@ -36,9 +37,9 @@ namespace ETLWebApp.Controllers
             return Ok(new {Message = "File uploaded successfully."});
         }
 
-        [Route("{filename}")]
+        [Route("{name}")]
         [HttpGet]
-        public ActionResult GetContent(string filename, string token)
+        public ActionResult GetContent(string name, string token)
         {
             var user = Authenticator.GetUserFromToken(token);
             if (user == null)
@@ -46,7 +47,7 @@ namespace ETLWebApp.Controllers
                 return Unauthorized(new {Message = "First login."});
             }
 
-            var response = _manager.GetCsvContent(user, filename);
+            var response = _manager.GetCsvContent(user, name);
             if (response == null)
             {
                 return NotFound(new {Message = "Not Found"});
@@ -55,8 +56,8 @@ namespace ETLWebApp.Controllers
             return Ok(new {Content = response});
         }
 
-        [HttpDelete("delete/{fileName}")]
-        public ActionResult Delete(string fileName, string token)
+        [HttpDelete("delete/{name}")]
+        public ActionResult Delete(string name, string token)
         {
             var user = Authenticator.GetUserFromToken(token);
             if (user == null)
@@ -64,7 +65,7 @@ namespace ETLWebApp.Controllers
                 return Unauthorized(new {Message = "First login."});
             }
 
-            _manager.DeleteCsv(user, fileName);
+            _manager.DeleteCsv(user, name);
             return Ok(new {Message = "File deleted successfully."});
         }
     }

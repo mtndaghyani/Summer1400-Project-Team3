@@ -59,12 +59,12 @@ namespace ETLLibrary.Database.Managers
             return _gateway.GetUserDatasets(username);
         }
 
-        public List<List<string>> GetCsvContent(User user, string fileName)
+        public List<List<string>> GetCsvContent(User user, string name)
         {
-            if (FileExists(user.Username, fileName))
+            var csv = _gateway.GetDataset(name, user.Id);
+            if (csv != null && FileExists(user.Username, csv.FileName))
             {
-                var csv = _gateway.GetDataset(fileName, user.Id);
-                return _serializer.Serialize(csv, GetFilePath(user.Username, fileName));
+                return _serializer.Serialize(csv, GetFilePath(user.Username, csv.FileName));
             }
 
             return null;
@@ -86,10 +86,11 @@ namespace ETLLibrary.Database.Managers
             return Path + "/" + username;
         }
 
-        public void DeleteCsv(User user, string fileName)
+        public void DeleteCsv(User user, string name)
         {
-            File.Delete(GetFilePath(user.Username, fileName));
-            _gateway.DeleteDataset(fileName, user.Id);
+            var csv = _gateway.GetDataset(name, user.Id);
+            File.Delete(GetFilePath(user.Username, csv.FileName));
+            _gateway.DeleteDataset(name, user.Id);
         }
     }
 }

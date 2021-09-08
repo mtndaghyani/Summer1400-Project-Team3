@@ -1,4 +1,5 @@
-﻿using ETLLibrary;
+﻿using System;
+using ETLLibrary;
 using ETLLibrary.Authentication;
 using ETLLibrary.Database.Utils;
 using ETLLibrary.Interfaces;
@@ -28,7 +29,13 @@ namespace ETLWebApp.Controllers
                 return Unauthorized(new {Message = "First login."});
             }
 
-            _manager.CreateDataset(user.Username, model);
+            try
+            {
+                _manager.CreateDataset(user.Username, model);            }
+            catch (Exception e)
+            {
+                return Conflict(new {Message = "Dataset with this name already exists"});
+            }
             return Ok(new {Message = "Dataset added successfully."});
         }
 

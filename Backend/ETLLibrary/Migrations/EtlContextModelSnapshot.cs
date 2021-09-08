@@ -28,6 +28,9 @@ namespace ETLLibrary.Migrations
                     b.Property<string>("ColDelimiter")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("HasHeader")
                         .HasColumnType("bit");
 

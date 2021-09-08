@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using ETLLibrary.Authentication;
 using ETLLibrary.Database;
 using ETLLibrary.Database.Models;
@@ -17,14 +16,16 @@ namespace ETLWebApp.Controllers
         private IAuthenticator _authenticator;
         private ICsvDatasetManager _csvManager;
         private ISqlServerDatasetManager _sqlServerManager;
+        private IPipelineManager _pipelineManager;
 
         public UsersController(EtlContext context, IAuthenticator authenticator, ICsvDatasetManager csvManager,
-            ISqlServerDatasetManager sqlServerManager)
+            ISqlServerDatasetManager sqlServerManager, IPipelineManager pipelineManager)
         {
             _context = context;
             _authenticator = authenticator;
             _csvManager = csvManager;
             _sqlServerManager = sqlServerManager;
+            _pipelineManager = pipelineManager;
         }
 
         [HttpPost("signup")]
@@ -85,6 +86,19 @@ namespace ETLWebApp.Controllers
             }
 
             return Ok(new {DbNames = _sqlServerManager.GetDatasets(username)});
+        }
+        
+        [HttpGet("{username}/pipelines")]
+        public ActionResult GetTables(string username)
+        {
+            var user = _context.Users.SingleOrDefault(u => u.Username == username);
+            if (user == null)
+            {
+                return NotFound(new {Message = "User with this username not found"});
+            }
+
+            var res = _pipelineManager.GetPipelines(user.Username);
+            return Ok(new {Pipelines = res});
         }
 
 

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using ETLLibrary.Database.Utils;
+using ETLLibrary.Interfaces;
 using Microsoft.Data.SqlClient;
 
 namespace ETLLibrary
 {
-    public class SqlServerSerializer
+    public class SqlServerSerializer : ISqlServerSerializer
     {
         public List<List<string>> Serialize(DatasetInfo info)
         {

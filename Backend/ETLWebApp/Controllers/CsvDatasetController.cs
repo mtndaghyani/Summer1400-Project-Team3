@@ -1,12 +1,8 @@
-﻿using System;
-using ETLLibrary.Authentication;
-using ETLLibrary.Database;
+﻿using ETLLibrary.Authentication;
 using ETLLibrary.Database.Utils;
 using ETLLibrary.Interfaces;
 using ETLWebApp.Models.CsvModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters.Xml;
 
 namespace ETLWebApp.Controllers
 {

@@ -29,7 +29,7 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Aggregations
             throw new NotImplementedException("aggregation not supported");
         }
 
-        public AggregationNode(int id , string name , AggregationType aggregationType, string aggregateColumnName, string newColumnName , 
+        public AggregationNode(string id , string name , AggregationType aggregationType, string aggregateColumnName, string newColumnName , 
             List<string> groupByColumnNames)
         {
             Id = id;

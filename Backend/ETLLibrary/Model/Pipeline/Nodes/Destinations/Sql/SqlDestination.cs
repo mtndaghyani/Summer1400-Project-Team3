@@ -9,7 +9,7 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Destinations.Sql
         private string _connectionString;
         private string _tableName;
 
-        public SqlDestination(int id, string name, string connectionString, string tableName)
+        public SqlDestination(string id, string name, string connectionString, string tableName)
         {
             Id = id;
             Name = name;

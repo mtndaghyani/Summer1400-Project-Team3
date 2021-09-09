@@ -29,10 +29,7 @@ namespace ETLLibrary.Database.Managers
             {
                 _gateway.AddDataset(username, fileName, info);
 
-                var bytes = new byte[fileLength];
-                stream.Read(bytes);
-                var content = bytes.Aggregate("", (current, b) => current + Convert.ToChar((byte) b));
-
+                var content = FormFileReader.Read(stream, fileLength);
                 File.WriteAllText(CsvConfigurator.GetFilePath(username, fileName), content);
             }
             else
@@ -40,7 +37,6 @@ namespace ETLLibrary.Database.Managers
                 throw new Exception("File with this name already exists.");
             }
         }
-
         private void EnsureDirectoryCreated(string path)
         {
             if (!Directory.Exists(path))

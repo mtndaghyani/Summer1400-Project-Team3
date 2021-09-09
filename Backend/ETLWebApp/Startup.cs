@@ -53,6 +53,7 @@ namespace ETLWebApp
             services.AddScoped(typeof(ICsvSerializer), typeof(CsvSerializer));
             services.AddScoped(typeof(ISqlServerSerializer), typeof(SqlServerSerializer));
             services.AddScoped(typeof(IPipelineManager), typeof(PipelineManager));
+            services.AddScoped(typeof(IYmlManager), typeof(YmlManager));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

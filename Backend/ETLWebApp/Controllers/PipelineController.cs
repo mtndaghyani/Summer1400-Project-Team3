@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Text;
 using ETLLibrary.Authentication;
 using ETLLibrary.Interfaces;
 using ETLLibrary.Model.Pipeline;
 using ETLWebApp.Models.PipelineModel;
+using ETLWebApp.Models.YmlModels;
 using Microsoft.AspNetCore.Mvc;
+using MediaTypeHeaderValue = Microsoft.Net.Http.Headers.MediaTypeHeaderValue;
 
 namespace ETLWebApp.Controllers
 {
@@ -11,11 +14,13 @@ namespace ETLWebApp.Controllers
     [Route("pipeline/")]
     public class PipelineController : Controller
     {
-        private IPipelineManager _manager;
+        private IPipelineManager _pipelineManager;
+        private IYmlManager _ymlManager;
 
-        public PipelineController(IPipelineManager manager)
+        public PipelineController(IPipelineManager pipelineManager, IYmlManager ymlManager)
         {
-            _manager = manager;
+            _pipelineManager = pipelineManager;
+            _ymlManager = ymlManager;
         }
 
         [HttpPost("create/")]
@@ -27,10 +32,10 @@ namespace ETLWebApp.Controllers
                 return Unauthorized(new {Message = "First login."});
             }
 
-            var res = _manager.CreatePipeline(user.Username, model.Name, model.Content);
+            var res = _pipelineManager.CreatePipeline(user.Username, model.Name, model.Content);
             return Ok(new {Message = res});
         }
-        
+
         [HttpDelete("delete/{name}")]
         public ActionResult Delete(string token, string name)
         {
@@ -40,7 +45,7 @@ namespace ETLWebApp.Controllers
                 return Unauthorized(new {Message = "First login."});
             }
 
-            _manager.DeletePipeline(name, user);
+            _pipelineManager.DeletePipeline(name, user);
             return Ok(new {Message = $"Pipeline {name} deleted successfully."});
         }
 
@@ -54,10 +59,33 @@ namespace ETLWebApp.Controllers
                 return Unauthorized(new {Message = "First login."});
             }
 
-            var pipeline = _manager.GetDbPipeline(user, name);
+            var pipeline = _pipelineManager.GetDbPipeline(user, name);
 
             return Ok(new {Content = pipeline.Content});
         }
+
+        [Route("yml/upload")]
+        [HttpPost]
+        public ActionResult Upload([FromForm] CreateYmlModel model, string token)
+        {
+            var user = Authenticator.GetUserFromToken(token);
+            if (user == null)
+            {
+                return Unauthorized(new {Message = "First login."});
+            }
+
+            try
+            {
+                _ymlManager.SaveYml(model.File.OpenReadStream(), model.Name, user.Username, model.File.Length);
+            }
+            catch (Exception e)
+            {
+                return Conflict(new {Message = "File upload failed due to unknown error(s)."});
+            }
+
+            return Ok(new {Message = "File uploaded successfully."});
+        }
+
 
         [HttpPost("run/")]
         public ActionResult Run(string token, RunModel model)
@@ -68,7 +96,7 @@ namespace ETLWebApp.Controllers
                 return Unauthorized(new {Message = "First login."});
             }
 
-            var pipeline = _manager.GetDbPipeline(user, model.Name);
+            var pipeline = _pipelineManager.GetDbPipeline(user, model.Name);
             try
             {
                 new PipelineConvertor(user.Username, pipeline.Content).Pipeline.Run();
@@ -80,9 +108,36 @@ namespace ETLWebApp.Controllers
             }
 
             return Ok(new {Messsage = "Pipeline ran successfully!"});
-
         }
-        
-        
+
+
+        [HttpGet("yml/download/{name}")]
+        public ActionResult Download(string token, string name)
+        {
+            var user = Authenticator.GetUserFromToken(token);
+            if (user == null)
+            {
+                return Unauthorized(new {Message = "First login."});
+            }
+
+            try
+            {
+                var yml = _ymlManager.GetYml(user.Id, name);
+                return GenerateYmlFile(name, yml);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new {Message = e.Message});
+            }
+        }
+
+        private FileContentResult GenerateYmlFile(string name, string yml)
+        {
+            return new(Encoding.UTF8.GetBytes(yml),
+                new MediaTypeHeaderValue("text/yaml"))
+            {
+                FileDownloadName = $"{name}.yml"
+            };
+        }
     }
 }

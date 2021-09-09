@@ -4,6 +4,7 @@ using ETLLibrary.Database.Utils;
 using ETLLibrary.Interfaces;
 using ETLWebApp.Models.CsvModels;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace ETLWebApp.Controllers
 {
@@ -27,12 +28,13 @@ namespace ETLWebApp.Controllers
                 return Unauthorized(new {Message = "First login."});
             }
 
+            var details = GetCreateModelDetails(model.Details);
             var info = new CsvInfo()
             {
-                Name = model.Name,
-                ColDelimiter = model.ColDelimiter,
-                RowDelimiter = model.RowDelimiter,
-                HasHeader = model.HasHeader
+                Name = details.Name,
+                ColDelimiter = details.ColDelimiter,
+                RowDelimiter = details.RowDelimiter,
+                HasHeader = details.HasHeader == "true"
             };
             try
             {
@@ -43,6 +45,11 @@ namespace ETLWebApp.Controllers
                 return Conflict(new {Message = e.Message});
             }
             return Ok(new {Message = "File uploaded successfully."});
+        }
+
+        private CreateModelDetails GetCreateModelDetails(string modelDetails)
+        {
+            return JsonConvert.DeserializeObject<CreateModelDetails>(modelDetails);
         }
 
         [Route("{name}")]

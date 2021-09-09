@@ -1,7 +1,8 @@
-﻿using System.Net.Http.Json;
+﻿using System;
 using ETLLibrary.Authentication;
 using ETLLibrary.Interfaces;
 using ETLWebApp.Models.PipelineModel;
+using ETLWebApp.Models.YmlModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ETLWebApp.Controllers
@@ -10,11 +11,13 @@ namespace ETLWebApp.Controllers
     [Route("pipeline/")]
     public class PipelineController : Controller
     {
-        private IPipelineManager _manager;
+        private IPipelineManager _pipelineManager;
+        private IYmlManager _ymlManager;
 
-        public PipelineController(IPipelineManager manager)
+        public PipelineController(IPipelineManager pipelineManager, IYmlManager ymlManager)
         {
-            _manager = manager;
+            _pipelineManager = pipelineManager;
+            _ymlManager = ymlManager;
         }
 
         [HttpPost("create/")]
@@ -26,7 +29,7 @@ namespace ETLWebApp.Controllers
                 return Unauthorized(new {Message = "First login."});
             }
 
-            var res = _manager.CreatePipeline(user.Username, model.Name, model.Content);
+            var res = _pipelineManager.CreatePipeline(user.Username, model.Name, model.Content);
             return Ok(new {Message = res});
         }
         
@@ -39,7 +42,7 @@ namespace ETLWebApp.Controllers
                 return Unauthorized(new {Message = "First login."});
             }
 
-            _manager.DeletePipeline(name, user);
+            _pipelineManager.DeletePipeline(name, user);
             return Ok(new {Message = $"Pipeline {name} deleted successfully."});
         }
 
@@ -53,9 +56,31 @@ namespace ETLWebApp.Controllers
                 return Unauthorized(new {Message = "First login."});
             }
 
-            var pipeline = _manager.GetDbPipeline(user, name);
+            var pipeline = _pipelineManager.GetDbPipeline(user, name);
 
             return Ok(new {Content = pipeline.Content});
+        }
+
+        [Route("yml/upload")]
+        [HttpPost]
+        public ActionResult Upload([FromForm] CreateYmlModel model, string token)
+        {
+            var user = Authenticator.GetUserFromToken(token);
+            if (user == null)
+            {
+                return Unauthorized(new {Message = "First login."});
+            }
+
+            try
+            {
+                _ymlManager.SaveYml(model.File.OpenReadStream(), model.Name, user.Username, model.File.Length);
+            }
+            catch (Exception e)
+            {
+                return Conflict(new {Message = "File upload failed due to unknown error(s)."});
+            }
+
+            return Ok(new {Message = "File uploaded successfully."});
         }
         
         

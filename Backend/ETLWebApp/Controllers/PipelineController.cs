@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Text;
 using ETLLibrary.Authentication;
 using ETLLibrary.Interfaces;
 using ETLLibrary.Model.Pipeline;
 using ETLWebApp.Models.PipelineModel;
 using ETLWebApp.Models.YmlModels;
 using Microsoft.AspNetCore.Mvc;
+using MediaTypeHeaderValue = Microsoft.Net.Http.Headers.MediaTypeHeaderValue;
 
 namespace ETLWebApp.Controllers
 {
@@ -84,6 +86,7 @@ namespace ETLWebApp.Controllers
             return Ok(new {Message = "File uploaded successfully."});
         }
 
+
         [HttpPost("run/")]
         public ActionResult Run(string token, RunModel model)
         {
@@ -92,6 +95,7 @@ namespace ETLWebApp.Controllers
             {
                 return Unauthorized(new {Message = "First login."});
             }
+
             var pipeline = _pipelineManager.GetDbPipeline(user, model.Name);
             try
             {
@@ -103,6 +107,36 @@ namespace ETLWebApp.Controllers
             }
 
             return Ok(new {Messsage = "Pipeline ran successfully!"});
+        }
+
+
+        [HttpGet("yml/download/{name}")]
+        public ActionResult Download(string token, string name)
+        {
+            var user = Authenticator.GetUserFromToken(token);
+            if (user == null)
+            {
+                return Unauthorized(new {Message = "First login."});
+            }
+
+            try
+            {
+                var yml = _ymlManager.GetYml(user.Id, name);
+                return GenerateYmlFile(name, yml);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new {Message = e.Message});
+            }
+        }
+
+        private FileContentResult GenerateYmlFile(string name, string yml)
+        {
+            return new(Encoding.UTF8.GetBytes(yml),
+                new MediaTypeHeaderValue("text/yaml"))
+            {
+                FileDownloadName = $"{name}.yml"
+            };
         }
     }
 }

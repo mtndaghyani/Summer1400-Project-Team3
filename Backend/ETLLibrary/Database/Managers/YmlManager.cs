@@ -21,5 +21,12 @@ namespace ETLLibrary.Database.Managers
             var json = YmlToJsonConvertor.Convert(content);
             _pipelineGateway.AddPipeline(username, name, json);
         }
+
+        public string GetYml(int userId, string pipelineName)
+        {
+            var pipeline = _pipelineGateway.GetPipeline(pipelineName, userId);
+            return JsonToYmlConvertor.Convert(pipeline.Content);
+            
+        }
     }
 }

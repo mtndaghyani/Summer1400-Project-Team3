@@ -38,12 +38,14 @@ namespace ETLWebApp.Controllers
             };
             try
             {
-                _manager.SaveCsv(model.File.OpenReadStream(), user.Username, model.File.FileName, info, model.File.Length);
+                _manager.SaveCsv(model.File.OpenReadStream(), user.Username, model.File.FileName, info,
+                    model.File.Length);
             }
             catch (Exception e)
             {
                 return Conflict(new {Message = e.Message});
             }
+
             return Ok(new {Message = "File uploaded successfully."});
         }
 

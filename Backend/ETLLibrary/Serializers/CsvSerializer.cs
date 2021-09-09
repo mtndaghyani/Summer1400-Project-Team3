@@ -5,7 +5,7 @@ using System.Linq;
 using ETLLibrary.Database.Models;
 using ETLLibrary.Interfaces;
 
-namespace ETLLibrary
+namespace ETLLibrary.Serializers
 {
     public class CsvSerializer : ICsvSerializer
     {

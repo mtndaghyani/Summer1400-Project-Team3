@@ -4,7 +4,7 @@ using ETLLibrary.Database.Utils;
 using ETLLibrary.Interfaces;
 using Microsoft.Data.SqlClient;
 
-namespace ETLLibrary
+namespace ETLLibrary.Serializers
 {
     public class SqlServerSerializer : ISqlServerSerializer
     {

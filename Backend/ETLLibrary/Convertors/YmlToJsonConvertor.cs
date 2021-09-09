@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using YamlDotNet.Serialization;
-namespace ETLLibrary
+
+namespace ETLLibrary.Convertors
 {
     public static class YmlToJsonConvertor
     {

@@ -1,6 +1,7 @@
-﻿using System.Net.Http.Json;
+﻿using System;
 using ETLLibrary.Authentication;
 using ETLLibrary.Interfaces;
+using ETLLibrary.Model.Pipeline;
 using ETLWebApp.Models.PipelineModel;
 using Microsoft.AspNetCore.Mvc;
 
@@ -56,6 +57,29 @@ namespace ETLWebApp.Controllers
             var pipeline = _manager.GetDbPipeline(user, name);
 
             return Ok(new {Content = pipeline.Content});
+        }
+
+        [HttpPost("run/")]
+        public ActionResult Run(string token, RunModel model)
+        {
+            var user = Authenticator.GetUserFromToken(token);
+            if (user == null)
+            {
+                return Unauthorized(new {Message = "First login."});
+            }
+
+            var pipeline = _manager.GetDbPipeline(user, model.Name);
+            try
+            {
+                new PipelineConvertor(user.Username, pipeline.Content).Pipeline.Run();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new {Message = e.Message});
+            }
+
+            return Ok(new {Messsage = "Pipeline ran successfully!"});
+
         }
         
         

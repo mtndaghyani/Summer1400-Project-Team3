@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ETLLibrary.Database.Utils;
 using ETLLibrary.Model.Pipeline.Nodes.Destinations;
 using ETLLibrary.Model.Pipeline.Nodes.Destinations.Csv;
 using ETLLibrary.Model.Pipeline.Nodes.Sources;
@@ -196,13 +197,13 @@ namespace ETLLibrary.Model.Pipeline
 
         private void CreateSourceNode(JToken node)
         {
-            SourceNode sourceNode = new CsvSource(node["id"].ToString(), "", "");
+            SourceNode sourceNode = new CsvSource(node["id"].ToString(), "", PipelineConfigurator.GetCsvPath(_username , node["data"]["name"]?.ToString()));
             Pipeline.AddNode(sourceNode);
         }
 
         private void CreateDestinationNode(JToken node)
         {
-            DestinationNode destinationNode = new CsvDestination(node["id"].ToString(), "", "");
+            DestinationNode destinationNode = new CsvDestination(node["id"].ToString(), "",  PipelineConfigurator.GetCsvPath(_username , node["data"]["name"]?.ToString()));
             Pipeline.AddNode(destinationNode);
         }
 
@@ -223,7 +224,10 @@ namespace ETLLibrary.Model.Pipeline
                 {
                     if (nextMapper[edge["target"]?.ToString() ?? string.Empty][..4] == "join")
                     {
-                        throw new NotImplementedException("join not supported yet");
+                        string joinNodeName = nextMapper[edge["target"]?.ToString() ?? string.Empty];
+                        SourceNode sourceNode = new CsvSource("source" + joinNodeName , "", PipelineConfigurator.GetCsvPath(_username , _joinNodeToSecondDataSet[joinNodeName]));
+                        Pipeline.AddNode(sourceNode);
+                        Pipeline.LinkNodesForJoin(edge["source"].ToString() , "source" + joinNodeName , joinNodeName);
                     }
                     else
                     {

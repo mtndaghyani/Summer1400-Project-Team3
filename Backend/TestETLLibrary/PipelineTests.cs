@@ -43,5 +43,11 @@ namespace TestETLLibrary
             pipeline.LinkNodesForJoin("1" , "2" , "3");
             pipeline.Run();
         }
+
+        [Fact]
+        public void TestPipelineConvertor()
+        {
+            
+        }
     }
 }

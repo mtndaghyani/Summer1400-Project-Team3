@@ -50,7 +50,7 @@ namespace ETLLibrary.Model.Pipeline
         private void AddNode(JToken node)
         {
             string id = node["id"].ToString();
-            string type = node["type"].ToString();
+            string type = node["data"]["type"]?.ToString();
             if (type == "filter")
             {
                 CreateFilterNode(node);

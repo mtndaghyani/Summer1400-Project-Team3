@@ -75,6 +75,7 @@ namespace ETLWebApp.Controllers
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.ToString());
                 return StatusCode(500, new {Message = e.Message});
             }
 

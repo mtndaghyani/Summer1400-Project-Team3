@@ -1,6 +1,7 @@
 ﻿using System;
 using ETLLibrary.Authentication;
 using ETLLibrary.Interfaces;
+using ETLLibrary.Model.Pipeline;
 using ETLWebApp.Models.PipelineModel;
 using ETLWebApp.Models.YmlModels;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +33,7 @@ namespace ETLWebApp.Controllers
             var res = _pipelineManager.CreatePipeline(user.Username, model.Name, model.Content);
             return Ok(new {Message = res});
         }
-        
+
         [HttpDelete("delete/{name}")]
         public ActionResult Delete(string token, string name)
         {
@@ -82,7 +83,26 @@ namespace ETLWebApp.Controllers
 
             return Ok(new {Message = "File uploaded successfully."});
         }
-        
-        
+
+        [HttpPost("run/")]
+        public ActionResult Run(string token, RunModel model)
+        {
+            var user = Authenticator.GetUserFromToken(token);
+            if (user == null)
+            {
+                return Unauthorized(new {Message = "First login."});
+            }
+            var pipeline = _pipelineManager.GetDbPipeline(user, model.Name);
+            try
+            {
+                new PipelineConvertor(user.Username, pipeline.Content).Pipeline.Run();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new {Message = e.Message});
+            }
+
+            return Ok(new {Messsage = "Pipeline ran successfully!"});
+        }
     }
 }

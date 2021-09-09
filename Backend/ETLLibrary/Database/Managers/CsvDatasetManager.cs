@@ -35,6 +35,10 @@ namespace ETLLibrary.Database.Managers
 
                 File.WriteAllText(CsvConfigurator.GetFilePath(username, fileName), content);
             }
+            else
+            {
+                throw new Exception("File with this name already exists.");
+            }
         }
 
         private void EnsureDirectoryCreated(string path)

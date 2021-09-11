@@ -85,5 +85,31 @@ namespace ETLWebApp.Controllers
             _manager.DeleteCsv(user, name);
             return Ok(new {Message = "File deleted successfully."});
         }
+
+        [HttpGet("download/{name}")]
+        public ActionResult Download(string token, string name)
+        {
+            var user = Authenticator.GetUserFromToken(token);
+            if (user == null)
+            {
+                return Unauthorized(new {Message = "First login."});
+            }
+
+            var path = CsvConfigurator.GetFilePath(user.Username, name + ".csv");
+            try
+            {
+                var file = System.IO.File.ReadAllBytes(path);
+                return new FileContentResult(file, "text/csv")
+                {
+                    FileDownloadName = name + ".csv"
+                };
+            }
+            catch (Exception e)
+            {
+                return NotFound(new {Message = e.Message});
+            }
+
+            
+        }
     }
 }

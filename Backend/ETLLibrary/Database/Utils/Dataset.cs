@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ETLLibrary.Enums;
 
 namespace ETLLibrary.Database.Utils
 {

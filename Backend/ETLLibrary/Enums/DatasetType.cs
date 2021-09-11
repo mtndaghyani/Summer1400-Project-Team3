@@ -1,4 +1,4 @@
-﻿namespace ETLLibrary.Database.Utils
+﻿namespace ETLLibrary.Enums
 {
     public enum DatasetType
     {

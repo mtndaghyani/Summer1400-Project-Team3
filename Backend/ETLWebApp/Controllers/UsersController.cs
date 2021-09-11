@@ -32,6 +32,10 @@ namespace ETLWebApp.Controllers
         [HttpPost("signup")]
         public ActionResult SignUp(RegisterModel model)
         {
+            if (_authenticator.UserExists(model.Username))
+            {
+                return Conflict(new {Message = "User with this username already exists."});
+            }
             var user = new User()
             {
                 Username = model.Username,

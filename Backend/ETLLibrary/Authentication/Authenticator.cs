@@ -37,5 +37,10 @@ namespace ETLLibrary.Authentication
         {
             Tokens.Remove(token);
         }
+
+        public bool UserExists(string username)
+        {
+            return _context.Users.FirstOrDefault(x => x.Username == username) != null;
+        }
     }
 }

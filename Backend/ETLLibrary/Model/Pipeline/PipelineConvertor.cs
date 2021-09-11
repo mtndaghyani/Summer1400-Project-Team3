@@ -4,8 +4,10 @@ using System.Linq;
 using ETLLibrary.Database.Utils;
 using ETLLibrary.Model.Pipeline.Nodes.Destinations;
 using ETLLibrary.Model.Pipeline.Nodes.Destinations.Csv;
+using ETLLibrary.Model.Pipeline.Nodes.Destinations.Sql;
 using ETLLibrary.Model.Pipeline.Nodes.Sources;
 using ETLLibrary.Model.Pipeline.Nodes.Sources.Csv;
+using ETLLibrary.Model.Pipeline.Nodes.Sources.Sql;
 using ETLLibrary.Model.Pipeline.Nodes.Transformations;
 using ETLLibrary.Model.Pipeline.Nodes.Transformations.Aggregations;
 using ETLLibrary.Model.Pipeline.Nodes.Transformations.Filters;
@@ -30,6 +32,7 @@ namespace ETLLibrary.Model.Pipeline
             _username = username;
             _jsonString = jsonString;
             Pipeline = new Pipeline(1, "");
+            Console.WriteLine(_jsonString);
             JObject jObject = JsonConvert.DeserializeObject<JObject>(_jsonString);
             JArray nodes = (JArray) jObject["nodes"];
             CreatePipelineNodes(nodes);
@@ -197,13 +200,40 @@ namespace ETLLibrary.Model.Pipeline
 
         private void CreateSourceNode(JToken node)
         {
-            SourceNode sourceNode = new CsvSource(node["id"].ToString(), "", PipelineConfigurator.GetCsvPath(_username , node["data"]["name"]?.ToString()));
+            string datasetName = node["data"]["name"]?.ToString();
+            SourceNode sourceNode;
+            if (Dataset.TypeOf(_username, datasetName) == DatasetType.Csv)
+            {
+                sourceNode = new CsvSource(node["id"].ToString(), "",
+                    PipelineConfigurator.GetCsvPath(_username, datasetName));
+            }
+            else
+            {
+                ConnectionInfo connectionInfo = PipelineConfigurator.GetConnectionString(_username, datasetName);
+                sourceNode = new SqlSource(node["id"].ToString(), "",
+                    connectionInfo.ConnectionString, connectionInfo.TableName);
+            }
+
             Pipeline.AddNode(sourceNode);
         }
 
         private void CreateDestinationNode(JToken node)
         {
-            DestinationNode destinationNode = new CsvDestination(node["id"].ToString(), "",  PipelineConfigurator.GetCsvPath(_username , node["data"]["name"]?.ToString()));
+            string datasetName = node["data"]["name"]?.ToString();
+            DestinationNode destinationNode;
+
+            if (Dataset.TypeOf(_username, datasetName) == DatasetType.Csv)
+            {
+                destinationNode = new CsvDestination(node["id"].ToString(), "",
+                    PipelineConfigurator.GetCsvPath(_username, datasetName));
+            }
+            else
+            {
+                ConnectionInfo connectionInfo = PipelineConfigurator.GetConnectionString(_username, datasetName);
+                destinationNode = new SqlDestination(node["id"].ToString(), "", connectionInfo.ConnectionString,
+                    connectionInfo.TableName);
+            }
+
             Pipeline.AddNode(destinationNode);
         }
 
@@ -225,9 +255,24 @@ namespace ETLLibrary.Model.Pipeline
                     if (nextMapper[edge["target"]?.ToString() ?? string.Empty][..4] == "join")
                     {
                         string joinNodeName = nextMapper[edge["target"]?.ToString() ?? string.Empty];
-                        SourceNode sourceNode = new CsvSource("source" + joinNodeName , "", PipelineConfigurator.GetCsvPath(_username , _joinNodeToSecondDataSet[joinNodeName]));
+                        string datasetName = _joinNodeToSecondDataSet[joinNodeName];
+                        SourceNode sourceNode;
+                        if (Dataset.TypeOf(_username, datasetName) == DatasetType.Csv)
+                        {
+                            sourceNode = new CsvSource("source" + joinNodeName, "",
+                                PipelineConfigurator.GetCsvPath(_username, datasetName));
+                        }
+                        else
+                        {
+                            ConnectionInfo connectionInfo =
+                                PipelineConfigurator.GetConnectionString(_username, datasetName);
+                            sourceNode = new SqlSource("source" + joinNodeName, "", connectionInfo.ConnectionString,
+                                connectionInfo.TableName);
+                        }
+
+
                         Pipeline.AddNode(sourceNode);
-                        Pipeline.LinkNodesForJoin(edge["source"].ToString() , "source" + joinNodeName , joinNodeName);
+                        Pipeline.LinkNodesForJoin(edge["source"].ToString(), "source" + joinNodeName, joinNodeName);
                     }
                     else
                     {

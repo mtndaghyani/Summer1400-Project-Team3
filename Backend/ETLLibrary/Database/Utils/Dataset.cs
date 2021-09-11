@@ -9,9 +9,9 @@ namespace ETLLibrary.Database.Utils
         {
             using var context = new EtlContext();
             var user = context.Users.Single(u => u.Username == username);
-            var csv = user.CsvFiles.SingleOrDefault(x => x.Name == datasetName);
+            var csv = context.CsvFiles.SingleOrDefault(x => x.Name == datasetName && x.UserId == user.Id);
             if (csv != null) return DatasetType.Csv;
-            var dbConnection = user.DbConnections.SingleOrDefault(x => x.Name == datasetName);
+            var dbConnection = context.DbConnections.SingleOrDefault(x => x.Name == datasetName && x.UserId == user.Id);
             if (dbConnection != null) return DatasetType.SqlServer;
             throw new Exception("Dataset not found");
         }

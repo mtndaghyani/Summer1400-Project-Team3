@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ETLLibrary.Database.Utils;
+using ETLLibrary.Enums;
 using ETLLibrary.Model.Pipeline.Nodes.Destinations;
 using ETLLibrary.Model.Pipeline.Nodes.Destinations.Csv;
 using ETLLibrary.Model.Pipeline.Nodes.Destinations.Sql;

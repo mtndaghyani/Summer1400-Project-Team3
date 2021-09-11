@@ -21,9 +21,9 @@ namespace ETLLibrary.Authentication
             _context = context;
         }
 
-        public User ValidateUser(string username, string password)
+        public User ValidateUser(string usernameOrEmail, string password)
         {
-            return _context.Users.FirstOrDefault(x => x.Username == username && x.Password == password);
+            return _context.Users.FirstOrDefault(x => (x.Username == usernameOrEmail || x.Email == usernameOrEmail) && x.Password == password);
         }
 
         public string Login(User user)

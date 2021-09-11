@@ -38,7 +38,7 @@ namespace ETLWebApp.Controllers
             };
             try
             {
-                _manager.SaveCsv(model.File.OpenReadStream(), user.Username, model.File.FileName, info,
+                _manager.SaveCsv(model.File.OpenReadStream(), user.Username, details.Name + ".csv", info,
                     model.File.Length);
             }
             catch (Exception e)

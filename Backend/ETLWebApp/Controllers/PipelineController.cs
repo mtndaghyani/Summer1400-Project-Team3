@@ -3,6 +3,7 @@ using System.Text;
 using ETLLibrary.Authentication;
 using ETLLibrary.Interfaces;
 using ETLLibrary.Model.Pipeline;
+using ETLLibrary.Processing;
 using ETLWebApp.Models.PipelineModel;
 using ETLWebApp.Models.YmlModels;
 using Microsoft.AspNetCore.Mvc;
@@ -88,28 +89,29 @@ namespace ETLWebApp.Controllers
 
 
         [HttpPost("run/")]
-        public ActionResult Run(string token, RunModel model)
+        public IActionResult Run(string token, RunModel model)
         {
             var user = Authenticator.GetUserFromToken(token);
             if (user == null)
             {
                 return Unauthorized(new {Message = "First login."});
             }
-
+            
             var pipeline = _pipelineManager.GetDbPipeline(user, model.Name);
             try
             {
-                new PipelineConvertor(user.Username, pipeline.Content).Pipeline.Run();
+                var p = new PipelineConvertor(user.Username, pipeline.Content).Pipeline;
+                var process = new Process(user.Username, p);
+                process.Start();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
                 return StatusCode(500, new {Message = e.Message});
             }
-
+            
             return Ok(new {Messsage = "Pipeline ran successfully!"});
         }
-
+        
 
         [HttpGet("yml/download/{name}")]
         public ActionResult Download(string token, string name)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using ETLLibrary.Enums;
 using ETLLibrary.Model.Pipeline;
@@ -7,6 +8,9 @@ namespace ETLLibrary.Processing
 {
     public class Process
     {
+        private static List<Process> _allProcesses = new List<Process>();
+
+        public string ErrorMessage;
         private string _username;
         private Pipeline _pipeline;
         public Thread MyThread;
@@ -16,6 +20,12 @@ namespace ETLLibrary.Processing
         {
             _pipeline = pipeline;
             _username = username;
+            ErrorMessage = "An error occured during running process.";
+        }
+
+        public Process()
+        {
+            
         }
 
         public void Run()
@@ -24,12 +34,14 @@ namespace ETLLibrary.Processing
             {
                 Status = Status.Running;
                 _pipeline.Run();
+                // Thread.Sleep(10000);
+                // throw new Exception();
                 Status = Status.Finished;
             }
             catch (Exception e)
             {
                 Status = Status.Failed;
-                throw new Exception(e.Message);
+                ErrorMessage = e.Message;
             }
         }
 
@@ -38,6 +50,26 @@ namespace ETLLibrary.Processing
             var threadStart = new ThreadStart(this.Run);
             MyThread = new Thread(threadStart);
             MyThread.Start();
+        }
+
+        public static void AddToProcesses(Process process)
+        {
+            _allProcesses.Add(process);
+        }
+
+        public static Process GetProcess(string username)
+        {
+            for (int i = _allProcesses.Count - 1; i >= 0; --i)
+            {
+                if (_allProcesses[i]._username == username) return _allProcesses[i];
+            }
+
+            return new Process() {Status = Status.NotRunning};
+        }
+
+        public static void DeleteFromProcesses(string username)
+        {
+            _allProcesses.RemoveAll(x => x._username == username);
         }
     }
 }

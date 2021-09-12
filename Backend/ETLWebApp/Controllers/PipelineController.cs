@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using ETLLibrary.Authentication;
+using ETLLibrary.Enums;
 using ETLLibrary.Interfaces;
 using ETLLibrary.Model.Pipeline;
 using ETLLibrary.Processing;
@@ -15,6 +16,7 @@ namespace ETLWebApp.Controllers
     [Route("pipeline/")]
     public class PipelineController : Controller
     {
+        //ToDo: refactor validate user by token
         private IPipelineManager _pipelineManager;
         private IYmlManager _ymlManager;
 
@@ -102,6 +104,9 @@ namespace ETLWebApp.Controllers
             {
                 var p = new PipelineConvertor(user.Username, pipeline.Content).Pipeline;
                 var process = new Process(user.Username, p);
+                // //var p = new PipelineConvertor(user.Username, pipeline.Content).Pipeline;
+                // var process = new Process(user.Username, null);
+                Process.AddToProcesses(process);
                 process.Start();
             }
             catch (Exception e)
@@ -109,7 +114,24 @@ namespace ETLWebApp.Controllers
                 return StatusCode(500, new {Message = e.Message});
             }
             
-            return Ok(new {Messsage = "Pipeline ran successfully!"});
+            return Ok(new {Messsage = "Process started successfully"});
+        }
+
+        [HttpGet("status/")]
+        public IActionResult Status(string token)
+        {
+            var user = Authenticator.GetUserFromToken(token);
+            if (user == null)
+            {
+                return Unauthorized(new {Message = "First login."});
+            }
+
+            var process = Process.GetProcess(user.Username);
+            if (process.Status == ETLLibrary.Enums.Status.Failed)
+            {
+                return Ok(new {Status = Enum.GetName(typeof(Status), process.Status), Message = process.ErrorMessage});
+            }
+            return Ok(new {Status = Enum.GetName(typeof(Status), process.Status)});
         }
         
 

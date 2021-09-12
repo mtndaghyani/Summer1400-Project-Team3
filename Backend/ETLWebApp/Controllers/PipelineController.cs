@@ -138,6 +138,24 @@ namespace ETLWebApp.Controllers
             }
             return Ok(new {Status = Enum.GetName(typeof(Status), process.Status)});
         }
+
+        [HttpPost("cancel/")]
+        public ActionResult Cancel(string token)
+        {
+            var user = Authenticator.GetUserFromToken(token);
+            if (user == null)
+            {
+                return Unauthorized(new {Message = "First login."});
+            }
+            
+            if (!Process.RunningProcessExists(user.Username))
+            {
+                return BadRequest(new {Message = "You don't have a running process."});
+            }
+
+            Process.CancelProcess(user.Username);
+            return Ok(new {Message = "Process canceled successfully."});
+        }
         
 
         [HttpGet("yml/download/{name}")]

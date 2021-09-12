@@ -77,5 +77,12 @@ namespace ETLLibrary.Processing
         {
             _allProcesses.RemoveAll(x => x._username == username);
         }
+
+        public static void CancelProcess(string username)
+        {
+            var process = _allProcesses.Single(x => x._username == username && x.Status == Status.Running);
+            process.MyThread.Interrupt();
+            _allProcesses.Remove(process);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using ETLLibrary.Enums;
 using ETLLibrary.Model.Pipeline;
@@ -34,7 +35,7 @@ namespace ETLLibrary.Processing
             {
                 Status = Status.Running;
                 _pipeline.Run();
-                // Thread.Sleep(10000);
+                // Thread.Sleep(30000);
                 // throw new Exception();
                 Status = Status.Finished;
             }
@@ -65,6 +66,11 @@ namespace ETLLibrary.Processing
             }
 
             return new Process() {Status = Status.NotRunning};
+        }
+
+        public static bool RunningProcessExists(string username)
+        {
+            return  _allProcesses.Any(x => x._username == username && x.Status == Status.Running);
         }
 
         public static void DeleteFromProcesses(string username)

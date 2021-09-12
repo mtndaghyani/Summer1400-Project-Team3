@@ -98,6 +98,11 @@ namespace ETLWebApp.Controllers
             {
                 return Unauthorized(new {Message = "First login."});
             }
+
+            if (Process.RunningProcessExists(user.Username))
+            {
+                return Conflict(new {Message = "You can't run more than one process at the same time."});
+            }
             
             var pipeline = _pipelineManager.GetDbPipeline(user, model.Name);
             try

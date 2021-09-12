@@ -7,7 +7,7 @@ namespace ETLLibrary.Interfaces
     {
         List<string> GetUserPipelines(string username);
         string AddPipeline(string username, string name, string content);
-        public void DeletePipeline(string pipelineName, int userId);
+        public bool DeletePipeline(string pipelineName, int userId);
         public DbPipeline GetPipeline(string name, int userId);
     }
 }

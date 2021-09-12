@@ -48,8 +48,12 @@ namespace ETLWebApp.Controllers
                 return Unauthorized(new {Message = "First login."});
             }
 
-            _manager.DeleteDataset(name, user);
-            return Ok(new {Message = $"Dataset {name} deleted successfully."});
+            if (_manager.DeleteDataset(name, user))
+            {
+                return Ok(new {Message = $"Dataset {name} deleted successfully."});
+            }
+
+            return NotFound(new {Message = "Dataset with this name not found."});
         }
         
         

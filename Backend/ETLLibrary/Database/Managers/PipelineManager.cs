@@ -19,9 +19,9 @@ namespace ETLLibrary.Database.Managers
             return _gateway.AddPipeline(username, name, content);
         }
         
-        public void DeletePipeline(string name, User user)
+        public bool DeletePipeline(string name, User user)
         {
-            _gateway.DeletePipeline(name, user.Id);
+            return _gateway.DeletePipeline(name, user.Id);
         }
         
         public List<string> GetPipelines(string username)

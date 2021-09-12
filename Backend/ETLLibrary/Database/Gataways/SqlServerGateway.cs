@@ -48,12 +48,13 @@ namespace ETLLibrary.Database.Gataways
             }
         }
         
-        public void DeleteDataset( string datasetName, int userId)
+        public bool DeleteDataset( string datasetName, int userId)
         {
             var dbConnection = Context.DbConnections.SingleOrDefault(x => x.Name == datasetName && x.UserId == userId);
-            if (dbConnection == null) return;
+            if (dbConnection == null) return false;
             Context.DbConnections.Remove(dbConnection);
             Context.SaveChanges();
+            return true;
         }
 
 

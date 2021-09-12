@@ -47,12 +47,13 @@ namespace ETLLibrary.Database.Gataways
             }
         }
 
-        public void DeleteDataset(string name, int userId)
+        public bool DeleteDataset(string name, int userId)
         {
             var csv = Context.CsvFiles.SingleOrDefault(x => x.Name == name && x.UserId == userId);
-            if (csv == null) return;
+            if (csv == null) return false;
             Context.CsvFiles.Remove(csv);
             Context.SaveChanges();
+            return true;
         }
 
         public Csv GetDataset(string name, int userId)

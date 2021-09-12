@@ -13,6 +13,6 @@ namespace ETLLibrary.Interfaces
 
         List<List<string>> GetCsvContent(User user, string fileName);
 
-        void DeleteCsv(User user, string fileName);
+        bool DeleteCsv(User user, string fileName);
     }
 }

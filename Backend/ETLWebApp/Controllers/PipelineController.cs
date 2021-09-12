@@ -48,8 +48,13 @@ namespace ETLWebApp.Controllers
                 return Unauthorized(new {Message = "First login."});
             }
 
-            _pipelineManager.DeletePipeline(name, user);
-            return Ok(new {Message = $"Pipeline {name} deleted successfully."});
+            if (_pipelineManager.DeletePipeline(name, user))
+            {
+                return Ok(new {Message = $"Pipeline {name} deleted successfully."});
+            }
+
+            return NotFound(new {Message = "Pipeline with this name not found."});
+
         }
 
         [Route("{name}")]

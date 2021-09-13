@@ -110,6 +110,10 @@ namespace ETLWebApp.Controllers
             }
             
             var pipeline = _pipelineManager.GetDbPipeline(user, model.Name);
+            if (pipeline == null)
+            {
+                return NotFound(new {Message = $"Pipeline with name {model.Name} not found;"});
+            }
             try
             {
                 var p = new PipelineConvertor(user.Username, pipeline.Content).Pipeline;

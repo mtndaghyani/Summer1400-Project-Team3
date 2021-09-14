@@ -92,7 +92,7 @@ namespace ETLLibrary.Model.Pipeline
         {
             JArray nodes = (JArray) tree["nodes"];
             int nodesSize = nodes.Count;
-            
+
             if (nodesSize == 1)
                 return GetSingleCondition(nodes[0]);
             JArray edges = (JArray) tree["edges"];
@@ -116,6 +116,7 @@ namespace ETLLibrary.Model.Pipeline
                         throw new NotImplementedException("logic operator not supported");
                     continue;
                 }
+
                 conditionMapper[node["id"]?.ToString() ?? string.Empty] = GetSingleCondition(node);
                 queue.Enqueue(node["id"]?.ToString());
             }
@@ -128,7 +129,7 @@ namespace ETLLibrary.Model.Pipeline
                 adjacentIds[source ?? string.Empty].Add(target);
                 adjacentIds[target ?? string.Empty].Add(source);
             }
-            
+
 
             while (queue.Count > 0)
             {
@@ -154,7 +155,7 @@ namespace ETLLibrary.Model.Pipeline
         private SingleCondition GetSingleCondition(JToken node)
         {
             JToken data = node["data"];
-            string operation = data["operation"].ToString();
+            string operation = data["operation"]?.ToString();
             Operator op;
             if (operation == ">")
                 op = Operator.GreaterThan;
@@ -164,8 +165,18 @@ namespace ETLLibrary.Model.Pipeline
                 op = Operator.Equals;
             else
                 throw new NotImplementedException("operator not supported");
-            SingleCondition singleCondition =
-                new SingleCondition(data["column"]?.ToString(), op, data["value"]?.ToString(), Type.String);
+            SingleCondition singleCondition;
+            if (op == Operator.Equals)
+            {
+                singleCondition =
+                    new SingleCondition(data["column"]?.ToString(), op, data["value"]?.ToString(), Type.String);
+            }
+            else
+            {
+                singleCondition =
+                    new SingleCondition(data["column"]?.ToString(), op, data["value"]?.ToString(), Type.Double);
+            }
+
             return singleCondition;
         }
 
@@ -270,7 +281,7 @@ namespace ETLLibrary.Model.Pipeline
                             sourceNode = new SqlSource("source" + joinNodeName, "", connectionInfo.ConnectionString,
                                 connectionInfo.TableName);
                         }
-                        
+
                         Pipeline.AddNode(sourceNode);
                         Pipeline.LinkNodesForJoin(edge["source"].ToString(), "source" + joinNodeName, joinNodeName);
                     }

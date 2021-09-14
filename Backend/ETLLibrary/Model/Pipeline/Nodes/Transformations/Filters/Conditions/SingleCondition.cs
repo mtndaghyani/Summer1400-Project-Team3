@@ -36,9 +36,9 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Filters.Conditions
             if (_type == Type.String)
                 throw new Exception("greater than is not defined for strings");
             else if (_type == Type.Integer)
-                return Int32.Parse(dictionary[_columnName].ToString()) > Int32.Parse(_desiredValue);
+                return Int32.Parse(dictionary[_columnName].ToString() ?? string.Empty) > Int32.Parse(_desiredValue);
             else if(_type == Type.Double)
-                return Double.Parse(dictionary[_columnName].ToString()) > Double.Parse(_desiredValue);
+                return Double.Parse(dictionary[_columnName].ToString() ?? string.Empty) > Double.Parse(_desiredValue);
             throw new NotImplementedException("type not supported");
         }
         private bool IsLessThan(IDictionary<string, object> dictionary)
@@ -46,9 +46,9 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Filters.Conditions
             if (_type == Type.String)
                 throw new Exception("less than is not defined for strings");
             else if (_type == Type.Integer)
-                return Int32.Parse(dictionary[_columnName].ToString()) < Int32.Parse(_desiredValue);
+                return Int32.Parse(dictionary[_columnName].ToString() ?? string.Empty) < Int32.Parse(_desiredValue);
             else if(_type == Type.Double)
-                return Double.Parse(dictionary[_columnName].ToString()) < Double.Parse(_desiredValue);
+                return Double.Parse(dictionary[_columnName].ToString() ?? string.Empty) < Double.Parse(_desiredValue);
             throw new NotImplementedException("type not supported");
         }
     }

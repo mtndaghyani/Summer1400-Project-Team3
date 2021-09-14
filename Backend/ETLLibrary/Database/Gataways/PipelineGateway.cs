@@ -46,12 +46,13 @@ namespace ETLLibrary.Database.Gataways
             }
         }
 
-        public void DeletePipeline( string pipelineName, int userId)
+        public bool DeletePipeline( string pipelineName, int userId)
         {
             var pipeline = Context.DbPipelines.SingleOrDefault(x => x.Name == pipelineName && x.UserId == userId);
-            if (pipeline == null) return;
+            if (pipeline == null) return false;
             Context.DbPipelines.Remove(pipeline);
             Context.SaveChanges();
+            return true;
         }
         
         public DbPipeline GetPipeline(string name, int userId)

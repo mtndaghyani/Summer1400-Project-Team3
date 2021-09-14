@@ -82,8 +82,12 @@ namespace ETLWebApp.Controllers
                 return Unauthorized(new {Message = "First login."});
             }
 
-            _manager.DeleteCsv(user, name);
-            return Ok(new {Message = "File deleted successfully."});
+            if (_manager.DeleteCsv(user, name))
+            {
+                return Ok(new {Message = "File deleted successfully."});
+            }
+
+            return NotFound(new {Message = "Dataset with this name not found;"});
         }
 
         [HttpGet("download/{name}")]

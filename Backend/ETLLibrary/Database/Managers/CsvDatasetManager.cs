@@ -75,11 +75,13 @@ namespace ETLLibrary.Database.Managers
                    File.Exists(CsvConfigurator.Path + "/" + username + "/" + fileName);
         }
 
-        public void DeleteCsv(User user, string name)
+        public bool DeleteCsv(User user, string name)
         {
             var csv = _gateway.GetDataset(name, user.Id);
+            if (csv == null) return false;
             File.Delete(CsvConfigurator.GetFilePath(user.Username, csv.FileName));
             _gateway.DeleteDataset(name, user.Id);
+            return true;
         }
     }
 }

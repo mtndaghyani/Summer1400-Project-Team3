@@ -48,8 +48,13 @@ namespace ETLWebApp.Controllers
                 return Unauthorized(new {Message = "First login."});
             }
 
-            _pipelineManager.DeletePipeline(name, user);
-            return Ok(new {Message = $"Pipeline {name} deleted successfully."});
+            if (_pipelineManager.DeletePipeline(name, user))
+            {
+                return Ok(new {Message = $"Pipeline {name} deleted successfully."});
+            }
+
+            return NotFound(new {Message = "Pipeline with this name not found."});
+
         }
 
         [Route("{name}")]
@@ -105,12 +110,16 @@ namespace ETLWebApp.Controllers
             }
             
             var pipeline = _pipelineManager.GetDbPipeline(user, model.Name);
+            if (pipeline == null)
+            {
+                return NotFound(new {Message = $"Pipeline with name {model.Name} not found;"});
+            }
             try
             {
                 var p = new PipelineConvertor(user.Username, pipeline.Content).Pipeline;
-                var process = new Process(user.Username, p);
-                // //var p = new PipelineConvertor(user.Username, pipeline.Content).Pipeline;
-                // var process = new Process(user.Username, null);
+                var process = new Process(user.Username, model.Name, p);
+                // var p = new PipelineConvertor(user.Username, pipeline.Content).Pipeline;
+                // var process = new Process(user.Username, model.Name, null);
                 Process.AddToProcesses(process);
                 process.Start();
             }
@@ -122,8 +131,8 @@ namespace ETLWebApp.Controllers
             return Ok(new {Messsage = "Process started successfully"});
         }
 
-        [HttpGet("status/")]
-        public IActionResult Status(string token)
+        [HttpGet("{name}/status/")]
+        public IActionResult Status(string name, string token)
         {
             var user = Authenticator.GetUserFromToken(token);
             if (user == null)
@@ -131,7 +140,7 @@ namespace ETLWebApp.Controllers
                 return Unauthorized(new {Message = "First login."});
             }
 
-            var process = Process.GetProcess(user.Username);
+            var process = Process.GetProcess(user.Username, name);
             if (process.Status == ETLLibrary.Enums.Status.Failed)
             {
                 return Ok(new {Status = Enum.GetName(typeof(Status), process.Status), Message = process.ErrorMessage});

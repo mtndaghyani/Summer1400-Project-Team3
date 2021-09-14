@@ -45,9 +45,9 @@ namespace ETLLibrary.Database.Managers
             _gateway.AddDataset(username, info);
         }
 
-        public void DeleteDataset(string name, User user)
+        public bool DeleteDataset(string name, User user)
         {
-            _gateway.DeleteDataset(name, user.Id);
+            return _gateway.DeleteDataset(name, user.Id);
         }
 
         public List<string> GetDatasets(string username)

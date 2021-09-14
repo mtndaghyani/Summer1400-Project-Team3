@@ -11,7 +11,7 @@ namespace ETLLibrary.Interfaces
     {
         List<string> GetUserDatasets(string username);
         
-        void DeleteDataset(string datasetName, int userId);
+        bool DeleteDataset(string datasetName, int userId);
 
         static bool DatasetExist(EtlContext context, string name, User user)
         {

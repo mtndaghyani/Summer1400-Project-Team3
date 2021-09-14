@@ -13,20 +13,21 @@ namespace ETLLibrary.Processing
 
         public string ErrorMessage;
         private string _username;
+        private string _pipelineName;
         private Pipeline _pipeline;
         public Thread MyThread;
         public Status Status { get; set; }
 
-        public Process(string username, Pipeline pipeline)
+        public Process(string username, string pipelineName, Pipeline pipeline)
         {
             _pipeline = pipeline;
+            _pipelineName = pipelineName;
             _username = username;
             ErrorMessage = "An error occured during running process.";
         }
 
         public Process()
         {
-            
         }
 
         public void Run()
@@ -35,13 +36,14 @@ namespace ETLLibrary.Processing
             {
                 Status = Status.Running;
                 _pipeline.Run();
-                // Thread.Sleep(30000);
+                // Thread.Sleep(10000);
                 // throw new Exception();
                 Status = Status.Finished;
             }
             catch (Exception e)
             {
                 Status = Status.Failed;
+                Console.WriteLine(e);
                 ErrorMessage = e.Message;
             }
         }
@@ -58,11 +60,12 @@ namespace ETLLibrary.Processing
             _allProcesses.Add(process);
         }
 
-        public static Process GetProcess(string username)
+        public static Process GetProcess(string username, string pipelineName)
         {
             for (int i = _allProcesses.Count - 1; i >= 0; --i)
             {
-                if (_allProcesses[i]._username == username) return _allProcesses[i];
+                if (_allProcesses[i]._username == username && 
+                    _allProcesses[i]._pipelineName == pipelineName) return _allProcesses[i];
             }
 
             return new Process() {Status = Status.NotRunning};

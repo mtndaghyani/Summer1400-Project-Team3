@@ -34,16 +34,24 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Joins
 
         private void CreateSortFunctions()
         {
-            Comparison<ExpandoObject> comparison = new Comparison<ExpandoObject>(
+            Comparison<ExpandoObject> firstComparison = new Comparison<ExpandoObject>(
                 (first, second) =>
                 {
                     IDictionary<string, object> firstDictionary = first;
                     IDictionary<string, object> secondDictionary = second;
                     return firstDictionary[_firstTableKey].ToString()
+                        .CompareTo(secondDictionary[_firstTableKey].ToString());
+                });
+            Comparison<ExpandoObject> secondComparison = new Comparison<ExpandoObject>(
+                (first, second) =>
+                {
+                    IDictionary<string, object> firstDictionary = first;
+                    IDictionary<string, object> secondDictionary = second;
+                    return firstDictionary[_secondTableKey].ToString()
                         .CompareTo(secondDictionary[_secondTableKey].ToString());
                 });
-            leftSort = new Sort<ExpandoObject>(comparison);
-            rightSort = new Sort<ExpandoObject>(comparison);
+            leftSort = new Sort<ExpandoObject>(firstComparison);
+            rightSort = new Sort<ExpandoObject>(secondComparison);
             leftSort.LinkTo(MergeJoin.LeftInput);
             rightSort.LinkTo(MergeJoin.RightInput);
         }

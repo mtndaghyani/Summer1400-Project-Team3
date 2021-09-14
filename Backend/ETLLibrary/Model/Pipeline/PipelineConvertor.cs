@@ -33,7 +33,6 @@ namespace ETLLibrary.Model.Pipeline
             _username = username;
             _jsonString = jsonString;
             Pipeline = new Pipeline(1, "");
-            Console.WriteLine(_jsonString);
             JObject jObject = JsonConvert.DeserializeObject<JObject>(_jsonString);
             JArray nodes = (JArray) jObject["nodes"];
             CreatePipelineNodes(nodes);
@@ -93,12 +92,9 @@ namespace ETLLibrary.Model.Pipeline
         {
             JArray nodes = (JArray) tree["nodes"];
             int nodesSize = nodes.Count;
+            
             if (nodesSize == 1)
-            {
-                Console.WriteLine("WOWOWOW");
                 return GetSingleCondition(nodes[0]);
-            }
-
             JArray edges = (JArray) tree["edges"];
             int edgesSize = edges.Count;
             Queue<string> queue = new Queue<string>();
@@ -110,19 +106,18 @@ namespace ETLLibrary.Model.Pipeline
             {
                 JToken node = nodes[i];
                 adjacentIds[node["id"]?.ToString() ?? string.Empty] = new();
-                if (node["id"]?.ToString()[..9] != "condition")
+                if (node["data"]?["type"]?.ToString() != "condition")
                 {
-                    if (node["id"]?.ToString()[..2] == "or")
-                        conditionOperator[node["id"]?.ToString()] = LogicOperator.Or;
-                    else if (node["id"]?.ToString()[..3] == "ans")
-                        conditionOperator[node["id"]?.ToString()] = LogicOperator.And;
+                    if (node["data"]?["type"]?.ToString() == "or")
+                        conditionOperator[node["id"]?.ToString() ?? string.Empty] = LogicOperator.Or;
+                    else if (node["data"]?["type"]?.ToString() == "and")
+                        conditionOperator[node["id"]?.ToString() ?? string.Empty] = LogicOperator.And;
                     else
                         throw new NotImplementedException("logic operator not supported");
                     continue;
                 }
-
-                conditionMapper[node["id"].ToString()] = GetSingleCondition(node);
-                queue.Enqueue(node["id"].ToString());
+                conditionMapper[node["id"]?.ToString() ?? string.Empty] = GetSingleCondition(node);
+                queue.Enqueue(node["id"]?.ToString());
             }
 
             for (int i = 0; i < edgesSize; ++i)
@@ -133,6 +128,7 @@ namespace ETLLibrary.Model.Pipeline
                 adjacentIds[source ?? string.Empty].Add(target);
                 adjacentIds[target ?? string.Empty].Add(source);
             }
+            
 
             while (queue.Count > 0)
             {
@@ -261,11 +257,9 @@ namespace ETLLibrary.Model.Pipeline
                     {
                         string joinNodeName = nextMapper[edge["target"]?.ToString() ?? string.Empty];
                         string datasetName = _joinNodeToSecondDataSet[joinNodeName];
-                        Console.WriteLine(joinNodeName + "---" + datasetName);
                         SourceNode sourceNode;
                         if (Dataset.TypeOf(_username, datasetName) == DatasetType.Csv)
                         {
-                            Console.WriteLine(PipelineConfigurator.GetCsvPath(_username , datasetName));
                             sourceNode = new CsvSource("source" + joinNodeName, "",
                                 PipelineConfigurator.GetCsvPath(_username, datasetName));
                         }
@@ -276,8 +270,7 @@ namespace ETLLibrary.Model.Pipeline
                             sourceNode = new SqlSource("source" + joinNodeName, "", connectionInfo.ConnectionString,
                                 connectionInfo.TableName);
                         }
-
-                        Console.WriteLine(edge["source"].ToString() + "    " + "source" + joinNodeName + "   " + joinNodeName);
+                        
                         Pipeline.AddNode(sourceNode);
                         Pipeline.LinkNodesForJoin(edge["source"].ToString(), "source" + joinNodeName, joinNodeName);
                     }

@@ -43,6 +43,7 @@ namespace ETLLibrary.Processing
             catch (Exception e)
             {
                 Status = Status.Failed;
+                Console.WriteLine(e);
                 ErrorMessage = e.Message;
             }
         }

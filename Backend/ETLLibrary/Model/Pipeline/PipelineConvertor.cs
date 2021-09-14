@@ -94,7 +94,11 @@ namespace ETLLibrary.Model.Pipeline
             JArray nodes = (JArray) tree["nodes"];
             int nodesSize = nodes.Count;
             if (nodesSize == 1)
+            {
+                Console.WriteLine("WOWOWOW");
                 return GetSingleCondition(nodes[0]);
+            }
+
             JArray edges = (JArray) tree["edges"];
             int edgesSize = edges.Count;
             Queue<string> queue = new Queue<string>();
@@ -154,7 +158,7 @@ namespace ETLLibrary.Model.Pipeline
         private SingleCondition GetSingleCondition(JToken node)
         {
             JToken data = node["data"];
-            string operation = node["operation"].ToString();
+            string operation = data["operation"].ToString();
             Operator op;
             if (operation == ">")
                 op = Operator.GreaterThan;
@@ -257,9 +261,11 @@ namespace ETLLibrary.Model.Pipeline
                     {
                         string joinNodeName = nextMapper[edge["target"]?.ToString() ?? string.Empty];
                         string datasetName = _joinNodeToSecondDataSet[joinNodeName];
+                        Console.WriteLine(joinNodeName + "---" + datasetName);
                         SourceNode sourceNode;
                         if (Dataset.TypeOf(_username, datasetName) == DatasetType.Csv)
                         {
+                            Console.WriteLine(PipelineConfigurator.GetCsvPath(_username , datasetName));
                             sourceNode = new CsvSource("source" + joinNodeName, "",
                                 PipelineConfigurator.GetCsvPath(_username, datasetName));
                         }
@@ -271,7 +277,7 @@ namespace ETLLibrary.Model.Pipeline
                                 connectionInfo.TableName);
                         }
 
-
+                        Console.WriteLine(edge["source"].ToString() + "    " + "source" + joinNodeName + "   " + joinNodeName);
                         Pipeline.AddNode(sourceNode);
                         Pipeline.LinkNodesForJoin(edge["source"].ToString(), "source" + joinNodeName, joinNodeName);
                     }

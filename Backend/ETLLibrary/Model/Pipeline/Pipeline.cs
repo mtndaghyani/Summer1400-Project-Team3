@@ -17,7 +17,7 @@ namespace ETLLibrary.Model.Pipeline
         private int _id;
         private string _name;
         private List<Node> _nodes = new();
-
+        private List<DataFlowSource<ExpandoObject>> _sourceNodes;
         public Pipeline(int id, string name)
         {
             _id = id;
@@ -140,19 +140,30 @@ namespace ETLLibrary.Model.Pipeline
 
         public void Run()
         {
-            List<DataFlowSource<ExpandoObject>> sourceNodes = new();
+            CreateSourceNodes();
+            // ReSharper disable once CoVariantArrayConversion
+            Network.Execute(_sourceNodes.ToArray());
+        }
+
+        public void Cancel()
+        {
+            // ReSharper disable once CoVariantArrayConversion
+            Network.Cancel(_sourceNodes.ToArray());
+        }
+
+        private void CreateSourceNodes()
+        {
+            _sourceNodes = new();
             foreach (var node in _nodes)
             {
                 try
                 {
-                    sourceNodes.Add(((SourceNode) node).DataFlow);
+                    _sourceNodes.Add(((SourceNode) node).DataFlow);
                 }
                 catch (InvalidCastException)
                 {
                 }
             }
-            
-            Network.Execute(sourceNodes.ToArray());
         }
     }
 }

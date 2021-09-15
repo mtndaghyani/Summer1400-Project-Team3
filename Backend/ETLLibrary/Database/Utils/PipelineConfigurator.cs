@@ -35,7 +35,7 @@ namespace ETLLibrary.Database.Utils
         {
             using var context = new EtlContext();
             var csv = GetCsv(username, datasetName, context);
-            return csv.ColDelimiter;
+            return csv.ColDelimiter ?? ",";
         }
         
 

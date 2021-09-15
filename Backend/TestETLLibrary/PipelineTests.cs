@@ -14,11 +14,11 @@ namespace TestETLLibrary
         public void TestAggregation() // just for my local testing
         {
             Pipeline pipeline = new Pipeline(1, "sample");
-            CsvSource csvSource = new CsvSource("1", "source from sample csv", "demo.csv");
+            CsvSource csvSource = new CsvSource("1", "source from sample csv", "demo.csv" , ",");
             AggregationNode aggregationNode =
                 new AggregationNode("2", "simple sum", AggregationType.Sum, "Period", "sum",
                     new List<string>() {"Series_reference"});
-            CsvDestination csvDestination = new CsvDestination("3", "sample destination", "modified.csv");
+            CsvDestination csvDestination = new CsvDestination("3", "sample destination", "modified.csv" , ",");
             pipeline.AddNode(csvSource);
             pipeline.AddNode(csvDestination);
             pipeline.AddNode(aggregationNode);
@@ -31,10 +31,10 @@ namespace TestETLLibrary
         public void TestJoin() // just for my local testing
         {
             Pipeline pipeline = new Pipeline(1, "sample");
-            CsvSource csvSource1 = new CsvSource("1", "source from sample csv", "join_1.csv");
-            CsvSource csvSource2 = new CsvSource("2", "source from sample csv", "join_2.csv");
+            CsvSource csvSource1 = new CsvSource("1", "source from sample csv", "join_1.csv" , ",");
+            CsvSource csvSource2 = new CsvSource("2", "source from sample csv", "join_2.csv" , ",");
             JoinNode joinNode = new JoinNode("3","simple join" , JoinType.FullJoin , "id" , "id");
-            CsvDestination csvDestination = new CsvDestination("4" , "" , "join_final.csv");
+            CsvDestination csvDestination = new CsvDestination("4" , "" , "join_final.csv" , ",");
             pipeline.AddNode(csvSource1);
             pipeline.AddNode(csvSource2);
             pipeline.AddNode(joinNode);

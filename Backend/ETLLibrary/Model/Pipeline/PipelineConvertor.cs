@@ -217,7 +217,7 @@ namespace ETLLibrary.Model.Pipeline
             if (Dataset.TypeOf(_username, datasetName) == DatasetType.Csv)
             {
                 sourceNode = new CsvSource(node["id"].ToString(), "",
-                    PipelineConfigurator.GetCsvPath(_username, datasetName));
+                    PipelineConfigurator.GetCsvPath(_username, datasetName) , PipelineConfigurator.GetCsvDelimiter(_username , datasetName));
             }
             else
             {
@@ -237,7 +237,7 @@ namespace ETLLibrary.Model.Pipeline
             if (Dataset.TypeOf(_username, datasetName) == DatasetType.Csv)
             {
                 destinationNode = new CsvDestination(node["id"].ToString(), "",
-                    PipelineConfigurator.GetCsvPath(_username, datasetName));
+                    PipelineConfigurator.GetCsvPath(_username, datasetName) , PipelineConfigurator.GetCsvDelimiter(_username , datasetName));
             }
             else
             {
@@ -272,7 +272,7 @@ namespace ETLLibrary.Model.Pipeline
                         if (Dataset.TypeOf(_username, datasetName) == DatasetType.Csv)
                         {
                             sourceNode = new CsvSource("source" + joinNodeName, "",
-                                PipelineConfigurator.GetCsvPath(_username, datasetName));
+                                PipelineConfigurator.GetCsvPath(_username, datasetName) , PipelineConfigurator.GetCsvDelimiter(_username , datasetName));
                         }
                         else
                         {

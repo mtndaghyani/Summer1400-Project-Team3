@@ -20,8 +20,11 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Aggregations
             else if (_aggregationType == AggregationType.Count)
                 return AggregationMethod.Count;
             else if (_aggregationType == AggregationType.Average)
+            {
+                
                 throw new NotImplementedException(
                     "ETLBox doesn't contain average as predefined function so we need to implement it manually later");
+            }
             else if (_aggregationType == AggregationType.Max)
                 return AggregationMethod.Max;
             else if (_aggregationType == AggregationType.Min)
@@ -64,6 +67,7 @@ namespace ETLLibrary.Model.Pipeline.Nodes.Transformations.Aggregations
 
         private void CreateAggregations(Aggregation aggregation)
         {
+
             var aggregateColumn = new AggregateColumn
             {
                 InputValuePropName = _aggregateColumnName,

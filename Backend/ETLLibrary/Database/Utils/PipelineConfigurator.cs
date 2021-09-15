@@ -31,19 +31,13 @@ namespace ETLLibrary.Database.Utils
             };
         }
 
-        public static void ConfigureCsvSource(CsvSource source, string username, string datasetName)
+        public static string GetCsvDelimiter(string username, string datasetName)
         {
             using var context = new EtlContext();
             var csv = GetCsv(username, datasetName, context);
-            ((ETLBox.DataFlow.Connectors.CsvSource) source.DataFlow).Configuration.Delimiter = csv.ColDelimiter;
+            return csv.ColDelimiter;
         }
-
-        public static void ConfigureCsvDestination(CsvDestination dest, string username, string datasetName)
-        {
-            using var context = new EtlContext();
-            var csv = GetCsv(username, datasetName, context);
-            ((ETLBox.DataFlow.Connectors.CsvDestination) dest.DataFlow).Configuration.Delimiter = csv.ColDelimiter;
-        }
+        
 
 
         private static Csv GetCsv(string username, string datasetName, EtlContext context)

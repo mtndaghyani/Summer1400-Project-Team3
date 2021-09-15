@@ -1,11 +1,14 @@
-﻿using System.Linq;
+﻿using System.Dynamic;
+using System.Linq;
+using ETLLibrary.Database.Models;
+using ETLLibrary.Model.Pipeline.Nodes.Destinations.Csv;
+using ETLLibrary.Model.Pipeline.Nodes.Sources.Csv;
+using Microsoft.EntityFrameworkCore;
 
 namespace ETLLibrary.Database.Utils
 {
     public static class PipelineConfigurator
     {
-        
-        
         public static string GetCsvPath(string username, string name)
         {
             using var context = new EtlContext();
@@ -26,6 +29,29 @@ namespace ETLLibrary.Database.Utils
                 ConnectionString = connectionString,
                 TableName = dbConnection.Table
             };
+        }
+
+        public static void ConfigureCsvSource(CsvSource source, string username, string datasetName)
+        {
+            using var context = new EtlContext();
+            var csv = GetCsv(username, datasetName, context);
+            ((ETLBox.DataFlow.Connectors.CsvSource) source.DataFlow).Configuration.Delimiter = csv.ColDelimiter;
+        }
+
+        public static void ConfigureCsvDestination(CsvDestination dest, string username, string datasetName)
+        {
+            using var context = new EtlContext();
+            var csv = GetCsv(username, datasetName, context);
+            ((ETLBox.DataFlow.Connectors.CsvDestination) dest.DataFlow).Configuration.Delimiter = csv.ColDelimiter;
+        }
+
+
+        private static Csv GetCsv(string username, string datasetName, EtlContext context)
+        {
+            var csv = context.CsvFiles
+                .Include(c => c.User)
+                .Single(x => x.Name == datasetName && x.User.Username == username);
+            return csv;
         }
     }
 

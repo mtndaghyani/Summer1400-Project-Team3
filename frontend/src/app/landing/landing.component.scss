@@ -1,0 +1,143 @@
+
+//btn gradiant color
+$btn-gradiant-color1: #6643B5;
+$btn-gradiant-color2: #430F58;
+//btn norm color
+$btn-solid-color: #8594E4;
+
+.main-banner {
+  background-image: url("../../assets/images/LandingBanner.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: right;
+  background-color: #e8f0f2;
+  display: flex;
+  .main-banner__text {
+    width: 70%;
+    .colorful {
+      background-image: linear-gradient(
+        70deg,
+        $btn-gradiant-color1,
+        $btn-gradiant-color2
+      );
+      color: #fff;
+      transition: 1s ease;
+      &:hover {
+        background-image: linear-gradient(
+          50deg,
+          $btn-gradiant-color1,
+          $btn-gradiant-color2
+        );
+      }
+    }
+    button {
+      padding: 12px 16px;
+      border-radius: 6px;
+      outline: none;
+      border: 1px transparent;
+      margin: 40px 0px 0px 32px;
+      @media screen and (max-width: 768px) {
+        margin: 20px 0px 0px 10px;
+      }
+
+      cursor: pointer;
+      font-size: 15px;
+      &:nth-last-child(1) {
+        border: 1px solid $btn-solid-color;
+        background-color: transparent;
+        transition: 0.2s ease;
+        &:hover {
+          background-color: $btn-solid-color;
+        }
+      }
+    }
+  }
+}
+
+.intro-banner {
+  width: 100%;
+  text-align: center;
+  * {
+    margin: 12px;
+  }
+  a {
+    display: block;
+    width: fit-content;
+    margin: auto;
+    margin-top: 2.5rem;
+    padding: 8px 12px;
+    border-radius: 6px;
+    outline: none;
+    cursor: pointer;
+    font-size: 15px;
+    border: 1px solid $btn-solid-color;
+    background-color: transparent;
+    transition: 0.2s ease;
+    &:hover {
+      background-color: $btn-solid-color;
+    }
+  }
+}
+.team-intro {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  margin-bottom: 20px;
+  .cards-container {
+    display: grid;
+    justify-items: center;
+    column-gap: 70px;
+    row-gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+
+    @media screen and (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 40px;
+    }
+    @media screen and (max-width: 425px) {
+      grid-template-columns: repeat(1, 1fr);
+      column-gap: auto;
+    }
+    grid-auto-rows: minmax(100px, auto);
+  }
+  h3 {
+    margin-bottom: 4rem;
+    margin-top: 2rem;
+  }
+  .profile-card {
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    &:last-child {
+      grid-column: 1 / 4;
+      @media screen and (max-width: 768px) {
+        grid-column: 1 / 3;
+      }
+      @media screen and (max-width: 425px) {
+        grid-column: 1 ;
+      }
+    }
+    text-align: center;
+    border-radius: 8px;
+    background-color: #D5DEF5;
+    max-width: 200px;
+    width: 100%;
+    padding: 10px;
+    margin: 12px 16px;
+    display: grid;
+    place-items: center;
+    div {
+      width: 150px;
+      height: 150px;
+      margin-top: -40px;
+      margin-bottom: 10px;
+      img {
+        width: 100%;
+        height: auto;
+        border-radius: 50%;
+        box-shadow: 0px -2px 1px #bbbbbb;
+      }
+    }
+  }
+}

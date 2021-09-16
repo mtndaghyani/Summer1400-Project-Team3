@@ -1,0 +1,23 @@
+footer {
+  text-align: center;
+  background-color: #430F58;
+  padding: 12px;
+}
+footer .foote_bottom_ul {
+  padding: 0px;
+  margin: 10px auto;
+  text-decoration: none;
+}
+footer .foote_bottom_ul li {
+  display: inline;
+}
+footer .foote_bottom_ul li a {
+  color: #fff;
+  margin: 0 12px;
+}
+footer p {
+  font-size: 10px;
+  color: #fff;
+}
+
+/*# sourceMappingURL=landing-footer.component.css.map */
